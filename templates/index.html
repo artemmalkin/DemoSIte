@@ -1,2 +1,6 @@
 {% extends 'base.html' %}
-Вы не авторизованы.
+
+{% block content %}
+    {{ title or 'Demo project by Artem' }}
+    Вы не авторизованы.
+{% endblock content %}

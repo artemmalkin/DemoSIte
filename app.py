@@ -1,6 +1,6 @@
+from datetime import datetime
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost/users?client_encoding=utf8'
@@ -17,6 +17,7 @@ class Users(db.Model):
     def __repr__(self):
         return f"<users {self.id}>"
 
+
 class Profiles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(50), unique=True, nullable=False)
@@ -28,21 +29,22 @@ class Profiles(db.Model):
     def __repr__(self):
         return f"<profiles {self.id}>"
 
+
 @app.route('/')
 def index():
-    return render_template('index.html', title="Demo project by Artem")
+    return render_template('index.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    context = dict()
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        user = Users(email, password)
-        db.session.add(user)
+        db.session.add(Users(email=request.form.get('email'),
+                             password=request.form.get('password')))
         db.session.commit()
-        return render_template('signup.html', title="УСПЕШНО!")
-    return render_template('signup.html', title="Demo project by Artem")
+        context.update(title="УСПЕШНО!")
+    return render_template('signup.html', **context)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

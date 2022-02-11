@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    font-family:Arial, Helvetica, sans-serif;
+    background-color: #ebebeb;
+}
+header {
+    position:sticky;
+    top: 0;
+    font-size: larger;
+    height: auto;
+    background-color: black;
+    filter: opacity(70%);
+    padding: 1.4em;
+    display: flex;
+}
+.menu, .menu-auth, .title {
+    display: flex;
+}
+.menu-auth {
+
+    margin-right: 0;
+}
+.title {
+    margin: 0 auto;
+    color: #ebebeb;
+    font-size: xx-large;
+}
+.menu div, .menu-auth div {
+    background-color: #caff7f;
+    margin: 0.2em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+}
+.menu a, .menu-auth a {
+    text-decoration: none;
+    color: #000000;
+}

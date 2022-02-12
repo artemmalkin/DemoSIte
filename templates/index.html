@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    {{ title or 'Demo project by Artem' }}
-    Вы не авторизованы.
+{% if login %}
+    <p>Привет, {{ login }}!</p>
+{% endif %}
 {% endblock content %}

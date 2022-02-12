@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3>Авторизация</h3>
-    <form method="POST" action="/login">
+    <h3>Регистрация</h3>
+    <form method="POST" action="/register">
         {% for flash_msg in get_flashed_messages() %}
         <div class="flash_msg">{{ flash_msg }}</div>
         {% endfor %}

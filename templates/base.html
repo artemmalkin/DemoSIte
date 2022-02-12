@@ -7,18 +7,43 @@
 </head>
 <body>
 <header>
-    <div class="menu">
+    <div class="menu_main">
         <div><a href="/">Главная</a></div>
         <div><a href="">Чат</a></div>
     </div>
     <div class="title">Demo Website</div>
-    <div class="menu-auth">
+    <div class="menu_auth">
         <div><a href="/login">Вход</a></div>
-        <div><a href="/signup">Регистрация</a></div>
+        <div><a href="/register">Регистрация</a></div>
     </div>
 </header>
-{% block content %}
 
-{% endblock content %}
+<div class="left_content">
+
+    {% block left_content %}
+    {% endblock left_content %}
+
+</div>
+
+<div class="content">
+
+    {% block content %}
+    {% endblock content %}
+
+</div>
+
+<div class="right_content">
+
+    {% block right_content %}
+        <div class="info_block">
+            <h3>Пользователи</h3>
+            {% for user in users %}
+                <p>{{ user.login }}</p>
+            {% endfor %}
+        </div>
+    {% endblock right_content %}
+
+</div>
+
 </body>
 </html>

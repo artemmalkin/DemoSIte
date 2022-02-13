@@ -16,14 +16,11 @@ header {
 }
 .menu_main, .menu_auth {
     display: flex;
-
+    align-items: center;
 }
 .menu_auth {
     margin-left: auto;
     margin-right: 0;
-}
-.menu_main {
-
 }
 .title {
     position: absolute;
@@ -33,7 +30,7 @@ header {
     color: #ebebeb;
     font-size: xx-large;
 }
-.menu_main div, .menu_auth div {
+.button {
     background-color: #caff7f;
     margin: 0.2em;
     padding: 0.5em;
@@ -90,4 +87,14 @@ header {
     background-color: #caff7f;
     border-radius: 0.5em;
     padding: 0.3em;
+}
+.avatar {
+    display: flex;
+    width: 2.2em;
+    height: 2.2em;
+    border-radius: 50%;
+    background-color: #ebebeb;
+    align-items: center;
+    align-content: center;
+    justify-content: center
 }

@@ -16,3 +16,6 @@ SQLAlchemy==1.4.31
 virtualenv==20.13.1
 virtualenv-clone==0.5.7
 Werkzeug==2.0.3
+
+WTForms~=3.0.1
+alembic~=1.7.6

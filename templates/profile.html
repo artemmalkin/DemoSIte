@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if username %}
+        <h1>Профиль пользователя {{ username }}</h1><br><br>
+        <p>id аккаунта: {{ id }}</p>
+    {% else %}
+        <h1>Пользователь с таким логином не существует.</h1>
+    {% endif %}
+{% endblock content %}

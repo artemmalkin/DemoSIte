@@ -8,13 +8,18 @@
 <body>
 <header>
     <div class="menu_main">
-        <div><a href="/">Главная</a></div>
-        <div><a href="">Чат</a></div>
+        <div class="button"><a href="/">Главная</a></div>
+        <div class="button"><a href="/chat">Чат</a></div>
     </div>
     <div class="title">Demo Website</div>
     <div class="menu_auth">
-        <div><a href="/login">Вход</a></div>
-        <div><a href="/register">Регистрация</a></div>
+        {% if login %}
+            <a class="avatar" href="/profile/{{ login }}">{{ login.upper()[0] }}</a>
+            <div class="button"><a href="/logout">Выйти</a></div>
+        {% else %}
+            <div class="button"><a href="/login">Вход</a></div>
+            <div class="button"><a href="/register">Регистрация</a></div>
+        {% endif %}
     </div>
 </header>
 
@@ -38,7 +43,7 @@
         <div class="info_block">
             <h3>Пользователи</h3>
             {% for user in users %}
-                <p>{{ user.login }}</p>
+                <p><a href="/profile/{{ user.login }}">{{ user.login }}</a></p>
             {% endfor %}
         </div>
     {% endblock right_content %}

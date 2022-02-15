@@ -13,8 +13,8 @@
     </div>
     <div class="title">Demo Website</div>
     <div class="menu_auth">
-        {% if login %}
-            <a class="avatar" href="/profile/{{ login }}">{{ login.upper()[0] }}</a>
+        {% if current_user.login %}
+            <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
             <div class="button"><a href="/logout">Выйти</a></div>
         {% else %}
             <div class="button"><a href="/login">Вход</a></div>
@@ -43,7 +43,7 @@
         <div class="info_block">
             <h3>Пользователи</h3>
             {% for user in users %}
-                <p><a href="/profile/{{ user.login }}">{{ user.login }}</a></p>
+                <p><a href="/profile/{{ user.id }}">{{ user.login }}</a></p>
             {% endfor %}
         </div>
     {% endblock right_content %}

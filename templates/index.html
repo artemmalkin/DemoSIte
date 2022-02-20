@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Главная страница</h1><br><br>
-{% if login %}
-    <p>Привет, {{ login }}!</p>
+    <h1>Главная страница</h1>
+{% if current_user.is_authenticated %}
+    <p>Привет, {{ current_user.login }}!</p>
 {% endif %}
 {% endblock content %}

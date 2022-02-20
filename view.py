@@ -4,7 +4,7 @@ from flask_login import login_user, login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import app, login_manager
+from app import login_manager, app, db
 from forms import RegisterOrLoginForm
 from models import User
 

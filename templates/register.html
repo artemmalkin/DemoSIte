@@ -3,15 +3,12 @@
     <h3>Регистрация</h3>
     <form method="POST" action="/register">
         {% for flash_msg in get_flashed_messages() %}
-        <div class="flash_msg">{{ flash_msg }}</div>
+        <div class="flash-msg">{{ flash_msg }}</div>
         {% endfor %}
-        <label>Логин</label><br>
+        {{ form.login.label }}<br>
         {{ form.login }}<br><br>
-        <label>Пароль</label><br>
-        {{ form.password}}<br><br>
+        {{ form.password.label }}<br>
+        {{ form.password }}<br><br>
         <input type="submit" value="Зарегистрироваться">
     </form>
 {% endblock content %}
-{% block right_content %}
-    {{ super() }}
-{% endblock %}

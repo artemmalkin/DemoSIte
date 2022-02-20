@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Чат</h1>
+    <div class="chat-window" id="chat-window">
+        <script type="text/javascript" src="../static/javascript/chat.js"></script>
+        <div class="chats" id="chats">
+            <div class="button" id="add-new-chat">+</div>
+            <div class="new-chat">
+                {{ search_form.search }}
+                <div class="close-button" id="close-new-chat"></div>
+            </div>
+            {% for chat in chats %}
+                <div class="chat">{{ chat.id }}</div>
+            {% endfor %}
+        </div>
+        <div class="chat-view">
+            {% if selected_chat %}
+                {{ search_form.search }}
+                <div class="chat-log">
+                    {% for message in messages %}
+                        <div class="chat-message">
+                            <div class="chat-message-from">
+                                {{ message.from.login }}
+                            </div>
+                            <div class="chat-message-content">
+                                {{ message.content }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="chat-input">
+                    {{ type_message_form.attach_button }}
+                    {{ type_message_form.message }}
+                    {{ type_message_form.send_button }}
+                </div>
+            {% else %}
+                <h3>Диалог не выбран</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

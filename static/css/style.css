@@ -1,10 +1,14 @@
 body {
     margin: 0;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background-color: #ebebeb;
 }
+
+
+/* HEADER */
+
 header {
-    position:sticky;
+    position: sticky;
     top: 0;
     font-size: larger;
     height: auto;
@@ -14,14 +18,23 @@ header {
     z-index: 1;
     align-items: center;
 }
-.menu_main, .menu_auth {
+
+/* header menu */
+
+.menu-main, .menu-auth {
     display: flex;
     align-items: center;
 }
-.menu_auth {
+
+.menu-auth {
     margin-left: auto;
     margin-right: 0;
 }
+
+.menu-main a, .menu-auth a {
+    text-decoration: none;
+}
+
 .title {
     position: absolute;
     width: 8em;
@@ -30,64 +43,7 @@ header {
     color: #ebebeb;
     font-size: xx-large;
 }
-.button {
-    background-color: #caff7f;
-    margin: 0.2em;
-    padding: 0.5em;
-    border-radius: 0.5em;
-}
-.menu_main a, .menu_auth a {
-    text-decoration: none;
-    color: #000000;
-}
-.content {
-    padding: 1em;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    text-align: center;
-}
-.right_content {
-    padding-top: 10em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 10em;
-    position: absolute;
-    width: 10%;
-    height: 100%;
-    right: 0;
-    top: 0;
-}
-.left_content {
-    padding-top: 10em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 10em;
-    position: absolute;
-    width: 10%;
-    height: 100%;
-    left: 0;
-    top: 0;
-}
-.info_block {
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 0.5em;
-    padding: 0.5em;
-    text-align: center;
-    filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.05));
-}
-.info_block h3 {
-    background-color: #caff7f;
-    border-radius: 0.5em;
-    padding: 0.1em;
-}
-.flash_msg {
-    margin: 0 auto;
-    width: max-content;
-    background-color: #caff7f;
-    border-radius: 0.5em;
-    padding: 0.3em;
-}
+
 .avatar {
     display: flex;
     width: 2.2em;
@@ -96,5 +52,233 @@ header {
     background-color: #ebebeb;
     align-items: center;
     align-content: center;
-    justify-content: center
+    justify-content: center;
+    color: black;
 }
+
+
+/* FIELDS */
+
+/* button */
+
+.button {
+    display: flex;
+    width: auto;
+    background-color: #caff7f;
+    padding: 0 .4em 0 .4em;
+    margin: .2em;
+    border-radius: 0.5em;
+    font-size: 1.5em;
+    cursor: pointer;
+    outline: none;
+    border: 0 none;
+    justify-content: center;
+}
+
+.button:hover {
+    background-color: rgba(202, 255, 127, 0.8);
+}
+
+/* button-header */
+
+.button-header {
+    padding: 0.5em;
+    border-radius: 0.5em;
+    font-weight: bolder;
+
+}
+
+.button-header a {
+    color: white;
+}
+
+.button-header a:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* close-button */
+
+.close-button {
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    outline: none;
+    border: 0 none;
+
+}
+
+.close-button::before {
+    display: block;
+    position: relative;
+    content: "";
+    top: 9px;
+    height: 2px;
+    width: 20px;
+    background-color: black;
+    transform: rotate(135deg);
+}
+
+.close-button::after {
+    display: block;
+    position: relative;
+    top: 7px;
+    content: "";
+    height: 2px;
+    width: 20px;
+    background-color: black;
+    transform: rotate(45deg);
+}
+
+/* inputs */
+
+.search-line {
+    width: 80%;
+    height: 1.4em;
+    margin: .2em;
+}
+
+#search {
+    width: 95%;
+    margin: .4em;
+    border-radius: 0.5em;
+    border: 2px solid #ebebeb;
+}
+
+
+/* CONTENT BODY */
+
+.content {
+    padding: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.right-content {
+    padding: 10em 1em;
+    position: absolute;
+    width: 10%;
+    height: 100%;
+    right: 0;
+    top: 0;
+}
+
+.left-content {
+    padding: 10em 1em;
+    position: absolute;
+    width: 10%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+/* widgets for left and right content */
+
+.info-block {
+    background-color: white;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    text-align: center;
+    filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.05));
+}
+
+.info-block h3 {
+    padding: 0.1em;
+}
+
+/* flash messages */
+
+.flash-msg {
+    margin: 0 auto;
+    width: max-content;
+    background-color: #caff7f;
+    border-radius: 0.5em;
+    padding: 0.3em;
+}
+
+
+/* BLUEPRINT CHAT */
+
+/* chat body */
+
+.chat-window {
+    width: 100%;
+    min-height: 45em;
+    background-color: white;
+    border-radius: 0.5em;
+    display: flex;
+    filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.05));
+    transition: 0.2s;
+    position: relative;
+}
+
+.chats {
+    border-right: 2px solid #ebebeb;
+    width: 20%;
+    border-radius: 0.5em 0 0 0.5em;
+    padding-top: 1em;
+    position: relative;
+    transition: 0.2s;
+}
+
+.chat {
+    padding: 0.4em;
+    border-top: 1px solid black;
+}
+
+.chat-view {
+    width: 100%;
+    border-radius: 0 0.5em 0.5em 0;
+    position: relative;
+    transition: 0.2s;
+}
+
+.chat-log {
+
+}
+
+.new-chat {
+    display: none;
+}
+
+/* chat actions */
+
+.act-new-chat .chats {
+    width: 100%;
+    transition: 0.2s;
+}
+
+.act-new-chat .chat-view {
+    display: none;
+    transition: 0.2s;
+}
+
+.act-new-chat #add-new-chat{
+    display: none;
+}
+
+.act-new-chat .new-chat {
+    display: flex;
+    align-items: center;
+    padding: 1em;
+}
+
+/* chat fields */
+
+textarea {
+    border-radius: 0.5em;
+    border: 2px solid #ebebeb;
+    resize: none;
+    width: 100%;
+}
+
+.chat-input {
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    width: 100%;
+}
+
+
+

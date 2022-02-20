@@ -7,48 +7,38 @@
 </head>
 <body>
 <header>
-    <div class="menu_main">
-        <div class="button"><a href="/">Главная</a></div>
-        <div class="button"><a href="/chat">Чат</a></div>
+    <div class="menu-main">
+        <div class="button-header"><a href="/">Главная</a></div>
+        <div class="button-header"><a href="/chat">Чат</a></div>
     </div>
     <div class="title">Demo Website</div>
-    <div class="menu_auth">
+    <div class="menu-auth">
         {% if current_user.login %}
             <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
-            <div class="button"><a href="/logout">Выйти</a></div>
+            <div class="button-header"><a href="/logout">Выйти</a></div>
         {% else %}
-            <div class="button"><a href="/login">Вход</a></div>
-            <div class="button"><a href="/register">Регистрация</a></div>
+            <div class="button-header"><a href="/login">Вход</a></div>
+            <div class="button-header"><a href="/register">Регистрация</a></div>
         {% endif %}
     </div>
 </header>
-
-<div class="left_content">
-
+<div class="left-content">
     {% block left_content %}
     {% endblock left_content %}
-
 </div>
-
 <div class="content">
-
     {% block content %}
     {% endblock content %}
-
 </div>
-
-<div class="right_content">
-
+<div class="right-content">
     {% block right_content %}
-        <div class="info_block">
+        <div class="info-block">
             <h3>Пользователи</h3>
             {% for user in users %}
                 <p><a href="/profile/{{ user.id }}">{{ user.login }}</a></p>
             {% endfor %}
         </div>
     {% endblock right_content %}
-
 </div>
-
 </body>
 </html>

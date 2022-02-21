@@ -13,7 +13,7 @@ from models import User
 def load_user(user_id):
     try:
         return User.query.get(user_id)
-    except:
+    except Exception:
         return None
 
 

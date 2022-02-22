@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% if user %}
-        <h1>Профиль пользователя {{ user.login }}</h1><br><br>
-        <p>id аккаунта: {{ user.id }}</p>
-    {% else %}
-        <h1>Пользователь с таким логином не существует.</h1>
-    {% endif %}
+    <h2>Профиль пользователя</h2>
+    <div class="content-block" style="text-align: left">
+        <p>Логин: {{ user.login }}</p>
+        <p>Id: {{ user.id }}</p>
+    </div>
 {% endblock content %}

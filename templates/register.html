@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3>Регистрация</h3>
-    <form method="POST" action="/register">
-        {% for flash_msg in get_flashed_messages() %}
-        <div class="flash-msg">{{ flash_msg }}</div>
-        {% endfor %}
-        {{ form.login.label }}<br>
-        {{ form.login }}<br><br>
-        {{ form.password.label }}<br>
-        {{ form.password }}<br><br>
-        <input type="submit" value="Зарегистрироваться">
-    </form>
+    <h2>Регистрация</h2>
+    <div class="content-block">
+        <form method="POST" action="/register">
+            {% for flash_msg in get_flashed_messages() %}
+            <div class="flash-msg">{{ flash_msg }}</div>
+            {% endfor %}
+            {{ form.login.label }}<br>
+            {{ form.login }}<br><br>
+            {{ form.password.label }}<br>
+            {{ form.password }}<br><br>
+            <input class="button" type="submit" value="Регистрация">
+            <a href="/login">Войти</a>
+        </form>
+    </div>
 {% endblock content %}

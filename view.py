@@ -16,10 +16,15 @@ def load_user(user_id):
     except Exception:
         return None
 
-
-@app.errorhandler(Exception)
+@app.errorhandler(404)
 def http_error_handler(e):
-    return render_template('error.html', error=e, users=User.query.all())
+    e = "Страница не найдена."
+    return render_template('error.html', error=e, users=User.query.all()), 404
+
+@app.errorhandler(401)
+def http_error_handler(e):
+    flash("Для доступа к данной странице, вы должны быть авторизованы.")
+    return redirect(url_for('login'))
 
 
 @app.route('/')

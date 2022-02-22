@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Главная страница</h1>
-{% if current_user.is_authenticated %}
-    <p>Привет, {{ current_user.login }}!</p>
-{% endif %}
+    <h2>Главная страница</h2>
+    <div class="content-block">
+        {% if current_user.is_authenticated %}
+            <p>Привет, {{ current_user.login }}!</p>
+        {% else %}
+            <p>Содержимое отсутствует</p>
+        {% endif %}
+    </div>
 {% endblock content %}

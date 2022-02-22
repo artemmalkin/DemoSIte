@@ -32,7 +32,7 @@
 </div>
 <div class="right-content">
     {% block right_content %}
-        <div class="info-block">
+        <div class="content-block">
             <h3>Пользователи</h3>
             {% for user in users %}
                 <p><a href="/profile/{{ user.id }}">{{ user.login }}</a></p>

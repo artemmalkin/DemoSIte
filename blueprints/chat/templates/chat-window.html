@@ -1,0 +1,50 @@
+<div class="chat-list" id="chat-list">
+
+    <div class="control">
+        <div class="button" id="add-new-chat">+</div>
+    </div>
+
+    <div class="search-user-window">
+
+        <div class="search-and-close">
+
+            <input type="search" class="search-line" id="search-users-for-new-chat" placeholder="Поиск пользователей">
+            <div class="close-button" id="close-new-chat"></div>
+
+        </div>
+
+        <div id="search-user-result"></div>
+
+    </div>
+
+    <div class="chat-list-items" id="chat-list-items">
+
+        {% if current_chat %}
+            <div class="user-item current" id="user-item" user_id="{{ current_chat.id }}">
+                <a href="/profile/{{ current_chat.id }}">{{ current_chat.login }}</a>
+            </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="chat-message-list">
+
+    {% if current_chat %}
+        <input type="search" class="search-line" id="search-users-for-new-chat" placeholder="Поиск сообщений">
+
+        <div class="chat-log" id="chat-log">
+        </div>
+
+        <div class="chat-input" id="chat-input" send_to="{{ current_chat.id }}">
+            {{ type_message_form.attach_button }}
+            {{ type_message_form.input_message }}
+            {{ type_message_form.send_button }}
+        </div>
+
+    {% else %}
+        <h3>Диалог не выбран</h3>
+    {% endif %}
+
+</div>

@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
     <h2>Ошибка</h2>
-    <div class="content-block">
-        <h1>{{ error }}</h1>
-        <a href="{{ url_for('index') }}">На главную</a>
-    </div>
+    <h1>{{ error }}</h1>
+    <a href="{{ url_for('index') }}">На главную</a>
 {% endblock content %}

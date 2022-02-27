@@ -2,12 +2,15 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 
 from config import Configuration
 
 app = Flask(__name__)
 
 app.config.from_object(Configuration)
+
+socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

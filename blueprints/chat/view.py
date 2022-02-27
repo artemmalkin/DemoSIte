@@ -7,8 +7,7 @@ from app import socketio, db
 from blueprints.chat import chat
 from blueprints.chat.templates.methods import methods
 from forms import TypeMessageForm
-from models import User, Chat
-
+from models import User
 
 @chat.route('/', methods=['GET', 'POST'])
 @login_required
@@ -46,12 +45,10 @@ def on_join(data):
 @socketio.on('new_chat')
 def new_chat(data):
     print(Chat.participants)
-    # try:
-    #     chat = Chat()
-    #     chat.participants = [user_id = current_user]
-    #     db.session.add_all([chat])
-    #     db.session.commit()
-    # except SQLAlchemyError as e:
-    #     db.session.rollback()
-    #     error = str(e.__dict__['orig'])
-    #     print(error)
+    try:
+        db.session.add_all([Chat(), Chat.participants.append(User.query.filter_by(id=current_user.id))])
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        error = str(e.__dict__['orig'])
+        print(error)

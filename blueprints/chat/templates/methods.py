@@ -1,7 +1,7 @@
 from flask import render_template, request
 
 from forms import TypeMessageForm
-from models import User, Chat
+from models import User
 
 
 def search_user(req, result=''):

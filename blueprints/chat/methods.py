@@ -1,4 +1,5 @@
 from flask import render_template, request
+from flask_login import current_user
 
 from forms import TypeMessageForm
 from models import User
@@ -11,14 +12,17 @@ def search_user(req, result=''):
     return render_template('user-list.html', result=result)
 
 
-def chat(req):
+def chat(req: int):
     context = dict()
+
     try:
         current_chat = User.query.get(int(req))
         context.update(current_chat=current_chat)
     except ValueError:
         pass
-    context.update(chats=Chat.query.all(), users=User.query.all(), type_message_form=TypeMessageForm(request.form))
+
+    context.update(chats=User.query.filter_by(id=current_user.id).one().chats, users=User.query.all(),
+                   type_message_form=TypeMessageForm(request.form))
     return render_template('chat.html', **context)
 
 

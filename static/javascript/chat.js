@@ -35,7 +35,7 @@ chat_window.addEventListener("click", function (event) {
                 chat_window.classList.remove("act-new-chat");
                 document.getElementById(`search-users-for-new-chat`).removeEventListener("keyup", searchUsers);
                 document.getElementById('chat-list-items').prepend(target);
-                socket.emit('new_chat', {recipient: user_id});
+                socket.emit('new_chat', {recipient: parseInt(user_id)});
             };
             target.classList.add("current");;
 

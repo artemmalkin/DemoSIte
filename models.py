@@ -42,7 +42,7 @@ class User(db.Model, UserMixin):
 class Chat(db.Model, UserMixin):
     __tablename__ = 'chats'
     id = db.Column(db.Integer, primary_key=True)
-    users = db.relationship('User', backref='chats', secondary=chat_participation)
+    users = db.relationship('User', backref='chats', secondary='chat_participation')
 
     def __repr__(self):
         return f"{self.id}"

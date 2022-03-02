@@ -1,3 +1,4 @@
+{% import 'macros.html' as macros %}
 <div class="chat-list" id="chat-list">
 
     <div class="control">
@@ -23,6 +24,19 @@
             <div class="user-item current" id="user-item" user_id="{{ current_chat.id }}">
                 <a href="/profile/{{ current_chat.id }}">{{ current_chat.login }}</a>
             </div>
+            {% for chat in chats %}
+                {% if current_chat not in chat.users %}
+                    <div class="user-item" id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
+                        <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for chat in chats %}
+                <div class="user-item" id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
+                    <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+                </div>
+            {% endfor %}
         {% endif %}
 
     </div>

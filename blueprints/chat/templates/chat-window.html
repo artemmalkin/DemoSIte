@@ -20,12 +20,19 @@
 
     <div class="chat-list-items" id="chat-list-items">
 
-        {% if current_chat %}
-            <div class="user-item current" id="user-item" user_id="{{ current_chat.id }}">
-                <a href="/profile/{{ current_chat.id }}">{{ current_chat.login }}</a>
+        {% if recipient%}
+            <script type="text/javascript">let socket = io();
+            socket.on('connect', function () {
+                socket.emit('join', {chat: '{{ current_chat.id }}'});
+            });
+            socket.on('received_message', function (data) {
+                createMessage(data)
+            })</script>
+            <div class="user-item current" id="user-item" user_id="{{ recipient.id }}">
+                <a href="/profile/{{ recipient.id }}">{{ recipient.login }}</a>
             </div>
             {% for chat in chats %}
-                {% if current_chat not in chat.users %}
+                {% if recipient not in chat.users %}
                     <div class="user-item" id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
                         <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
                     </div>
@@ -45,13 +52,19 @@
 
 <div class="chat-message-list">
 
-    {% if current_chat %}
+    {% if recipient %}
         <input type="search" class="search-line" id="search-users-for-new-chat" placeholder="Поиск сообщений">
 
         <div class="chat-log" id="chat-log">
+            {% for message in current_chat.messages %}
+                <div class="message">
+                    <a class="message-from" href="../profile/{{ message.user.id }}">{% if message.user.id == current_user.id %}(Вы) {% endif %}{{ message.user.login }}</a>
+                    <div class="message-content">{{ message.content }}</div>
+                </div>
+            {% endfor %}
         </div>
 
-        <div class="chat-input" id="chat-input" send_to="{{ current_chat.id }}">
+        <div class="chat-input" id="chat-input" send_to="{{ recipient.id }}">
             {{ type_message_form.attach_button }}
             {{ type_message_form.input_message }}
             {{ type_message_form.send_button }}

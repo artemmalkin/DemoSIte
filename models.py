@@ -4,21 +4,15 @@ from flask_login import UserMixin
 
 from app import db
 
-chat_participation = db.Table(
-    'chat_participation',
-    db.Column(
-        'chat_id',
-        db.Integer,
-        db.ForeignKey('chats.id'),
-        primary_key=True
-    ),
-    db.Column(
-        'user_id',
-        db.Integer,
-        db.ForeignKey('users.id'),
-        primary_key=True
-    )
-)
+
+class ChatParticipation(db.Model, UserMixin):
+    __tablename__ = 'chat_participation'
+    chat_id = db.Column(db.Integer, db.ForeignKey('chats.id'), primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    recipient_id = db.Column(db.Integer)
+
+    user = db.relationship('User', backref='chat_participations')
+    chat = db.relationship('Chat', backref='user_participations')
 
 
 class User(db.Model, UserMixin):
@@ -42,7 +36,7 @@ class User(db.Model, UserMixin):
 class Chat(db.Model, UserMixin):
     __tablename__ = 'chats'
     id = db.Column(db.Integer, primary_key=True)
-    users = db.relationship('User', backref='chats', secondary='chat_participation')
+    users = db.relationship('User', backref='chats', secondary='chat_participation', viewonly=True)
 
     def __repr__(self):
         return f"{self.id}"
@@ -57,15 +51,7 @@ class Message(db.Model, UserMixin):
     is_read = db.Column(db.Boolean, default=False)
 
     chat = db.relationship('Chat', backref='messages')
+    user = db.relationship('User', backref='messages')
 
     def __repr__(self):
         return f"id: {self.id}, sender_id: {self.sender_id}, content: {self.content}"
-
-# ouruser = User(login='test', password='123')
-# ourchat = Chat()
-# ouruser.chats.append(ourchat)
-# db.session.add(ouruser)
-# db.session.commit()
-# ourchat.messages.append(Message(content='contentik', is_read=False, sender_id=ouruser.id))
-# db.session.add(ourchat)
-# db.session.commit()

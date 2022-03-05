@@ -1,11 +1,6 @@
 const chat_window = document.getElementById('chat-window');
-let socket = io();
-socket.on('connect', function () {
-    //socket.emit('join', {});
-});
-socket.on('recieved_message', function (data) {
-    createMessage(data)
-})
+
+
 
 chat_window.addEventListener("click", function (event) {
 
@@ -48,7 +43,8 @@ chat_window.addEventListener("click", function (event) {
 
             const recipient = document.getElementById('chat-input').getAttribute('send_to')
             const content = document.getElementById('input_message').value;
-            socket.emit('send_message', {to: recipient, content: content});
+            socket.emit('send_message', {recipient: parseInt(recipient), content: content, me: true});
+            document.getElementById('input_message').value = '';
 
             break
 
@@ -86,8 +82,13 @@ function createMessage(data) {
     message.className = 'message';
 
     message_from.className = 'message-from';
-    message_from.href = `../profile/${data.from.id}`;
-    message_from.innerHTML = data.from.login;
+    message_from.href = `../profile/${data.sender.id}`;
+    if (data.me){
+        message_from.innerHTML = `(Вы) ${data.sender.login}`;
+    } else {
+        message_from.innerHTML = data.sender.login;
+    }
+
 
     message_content.innerText = data.content;
     message_content.className = 'message-content';

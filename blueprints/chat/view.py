@@ -34,12 +34,10 @@ def on_join(data):
     room = data['chat']
     join_room(room)
     session['room'] = room
-    print(session)
 
 
 @socketio.on('leave')
 def on_leave(data):
-    print('leave')
     leave_room(data)
 
 

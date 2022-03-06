@@ -261,11 +261,13 @@ header {
 .chat-log {
     overflow: auto;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 1em);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 10%;
+    padding: .5em;
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) inset;
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
 .search-user-window {
@@ -343,11 +345,13 @@ textarea {
 }
 
 .chat-input {
-    position: absolute;
     display: flex;
     bottom: 0;
     width: 100%;
     background-color: white;
+    box-shadow: 0 0 9px rgba(0, 0, 0, 0.3) inset;
+    -webkit-box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 

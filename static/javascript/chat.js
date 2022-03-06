@@ -1,6 +1,5 @@
 const chat_window = document.getElementById('chat-window');
-
-
+const chat_log = document.getElementById('chat-log')
 
 chat_window.addEventListener("click", function (event) {
 
@@ -31,11 +30,15 @@ chat_window.addEventListener("click", function (event) {
                 document.getElementById(`search-users-for-new-chat`).removeEventListener("keyup", searchUsers);
                 document.getElementById('chat-list-items').prepend(target);
                 socket.emit('new_chat', {recipient: parseInt(user_id)});
-            };
-            target.classList.add("current");;
+            }
+
+            target.classList.add("current");
 
 
-            setTimeout(() => {window.location.href = url}, 200)
+
+            setTimeout(() => {
+                window.location.href = url
+            }, 200)
 
             break
 
@@ -43,7 +46,7 @@ chat_window.addEventListener("click", function (event) {
 
             const recipient = document.getElementById('chat-input').getAttribute('send_to')
             const content = document.getElementById('input_message').value;
-            socket.emit('send_message', {recipient: parseInt(recipient), content: content, me: true});
+            socket.emit('send_message', {recipient: parseInt(recipient), content: content});
             document.getElementById('input_message').value = '';
 
             break
@@ -64,36 +67,41 @@ function searchUsers(event = KeyboardEvent) {
 
         document.getElementById(`search-user-result`).innerHTML = Get(url)
     }
-    ;
-};
+
+}
 
 function Get(theUrl) {
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", theUrl, false);
     xmlHttp.send(null);
     return xmlHttp.responseText;
-};
+}
 
 function createMessage(data) {
+    console.log(data)
     let message = document.createElement('div');
     let message_from = document.createElement('a');
+    let message_time = document.createElement('time')
     let message_content = document.createElement('div')
 
     message.className = 'message';
 
     message_from.className = 'message-from';
     message_from.href = `../profile/${data.sender.id}`;
-    if (data.me){
-        message_from.innerHTML = `(Вы) ${data.sender.login}`;
-    } else {
-        message_from.innerHTML = data.sender.login;
-    }
+    message_time.dateTime = `${data.date.year}:${data.date.month}:${data.date.day}:${data.date.hour}:${data.date.minute}`;
+    message_time.innerText = ` ${data.date.hour}:${data.date.minute}`
+    message_from.innerHTML = data.sender.login;
+    message_from.appendChild(message_time)
 
+    if (data.me) {
+        message.classList.add('me');
+    }
 
     message_content.innerText = data.content;
     message_content.className = 'message-content';
 
     message.appendChild(message_from);
     message.appendChild(message_content);
-    document.getElementById('chat-log').append(message);
+    chat_log.append(message);
+    chat_log.scrollTo(0, chat_log.scrollHeight);
 }

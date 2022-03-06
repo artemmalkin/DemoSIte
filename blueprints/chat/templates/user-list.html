@@ -1,7 +1,7 @@
 {% if result %}
     {% for user in result %}
-        <div class="user-item" id="user-item" user_id="{{ user.user_id }}">
-        <a href="/profile/{{ user.user_id }}">{{ user.login }}</a>
+        <div class="user-item" id="user-item" user_id="{{ user.id }}">
+        <a href="/profile/{{ user.id }}">{{ user.login }}</a>
         </div>
     {% endfor %}
 {% else %}

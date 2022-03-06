@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 from app import db
 
@@ -28,7 +28,7 @@ class User(db.Model, UserMixin):
     @property
     def serialize(self):
         return {
-            'user_id': self.id,
+            'id': self.id,
             'login': self.login
         }
 
@@ -49,9 +49,21 @@ class Message(db.Model, UserMixin):
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     content = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
     chat = db.relationship('Chat', backref='messages')
     user = db.relationship('User', backref='messages')
 
     def __repr__(self):
         return f"id: {self.id}, sender_id: {self.sender_id}, content: {self.content}"
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sender': current_user.serialize,
+            'content': self.content,
+            'is_read': self.is_read,
+            'date': {'year': self.date.year, 'month': self.date.month, 'day': self.date.day, 'hour': self.date.hour,
+                     'minute': self.date.minute}
+        }

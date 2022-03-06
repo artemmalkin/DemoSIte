@@ -131,18 +131,11 @@ header {
 /* inputs */
 
 .search-line {
-    width: 80%;
-    height: 1.4em;
-    margin: .2em;
-}
-
-#search-users-for-new-chat {
     width: 95%;
     margin: .4em;
     border-radius: 0.5em;
     border: 2px solid #ebebeb;
 }
-
 
 /* CONTENT BODY */
 
@@ -252,8 +245,17 @@ header {
     word-break: break-all;
 }
 
+.message time {
+    font-size: small;
+}
+
+.me {
+    align-self: flex-end;
+}
+
 .message-from {
-    padding-bottom: .4em;
+    padding-bottom: 0;
+    text-decoration: none;
 }
 
 .chat-log {
@@ -286,6 +288,10 @@ header {
     cursor: pointer;
     font-size: 1em;
     transition: 0.3s;
+}
+
+.user-item a {
+    text-decoration: none;
 }
 
 .current {

@@ -25,7 +25,7 @@ def http_error_handler(e):
 
 @app.errorhandler(401)
 def http_error_handler(e):
-    flash("Для доступа к данной странице, вы должны быть авторизованы.")
+    flash("Для доступа к данной странице вы должны быть авторизованы.")
     return redirect(url_for('login'))
 
 

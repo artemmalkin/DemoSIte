@@ -33,6 +33,21 @@ class User(db.Model, UserMixin):
         }
 
 
+class Notification(db.Model, UserMixin):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    title = db.Column(db.String(50), nullable=False)
+    content = db.Column(db.String(500), nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='notifications')
+
+    def __repr__(self):
+        return f"id: {self.id} title: {self.title}"
+
+
 class Chat(db.Model, UserMixin):
     __tablename__ = 'chats'
     id = db.Column(db.Integer, primary_key=True)
@@ -64,6 +79,5 @@ class Message(db.Model, UserMixin):
             'sender': current_user.serialize,
             'content': self.content,
             'is_read': self.is_read,
-            'date': {'year': self.date.year, 'month': self.date.month, 'day': self.date.day, 'hour': self.date.hour,
-                     'minute': self.date.minute}
+            'date': [self.date.strftime("%Y:%M:%D:%H:%M"), self.date.strftime("%H:%M")]
         }

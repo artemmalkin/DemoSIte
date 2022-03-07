@@ -35,7 +35,6 @@ chat_window.addEventListener("click", function (event) {
             target.classList.add("current");
 
 
-
             setTimeout(() => {
                 window.location.href = url
             }, 200)
@@ -78,7 +77,6 @@ function Get(theUrl) {
 }
 
 function createMessage(data) {
-    console.log(data)
     let message = document.createElement('div');
     let message_from = document.createElement('a');
     let message_time = document.createElement('time')
@@ -88,8 +86,8 @@ function createMessage(data) {
 
     message_from.className = 'message-from';
     message_from.href = `../profile/${data.sender.id}`;
-    message_time.dateTime = `${data.date.year}:${data.date.month}:${data.date.day}:${data.date.hour}:${data.date.minute}`;
-    message_time.innerText = ` ${data.date.hour}:${data.date.minute}`
+    message_time.dateTime = data.date[0];
+    message_time.innerText = ` ${data.date[1]}`;
     message_from.innerHTML = data.sender.login;
     message_from.appendChild(message_time)
 

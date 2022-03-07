@@ -82,9 +82,7 @@ header {
 
 .button-header {
     padding: 0.5em;
-    border-radius: 0.5em;
     font-weight: bolder;
-
 }
 
 .button-header a {
@@ -93,6 +91,30 @@ header {
 
 .button-header a:hover {
     color: rgba(255, 255, 255, 0.75);
+}
+
+/* button-ico */
+
+.notification {
+    position: absolute;
+}
+
+.notification-count {
+    color: white;
+    font-size: initial;
+}
+
+.button-ico {
+    height: 36px;
+    width: 36px;
+    margin: 0 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-ico:hover {
+    cursor: pointer;
 }
 
 /* close-button */
@@ -253,9 +275,17 @@ header {
     align-self: flex-end;
 }
 
+.me .message-from {
+    text-align: end;
+}
+
 .message-from {
     padding-bottom: 0;
     text-decoration: none;
+}
+
+.message-content {
+    white-space: pre-line;
 }
 
 .chat-log {
@@ -267,7 +297,6 @@ header {
     align-items: flex-start;
     padding: .5em;
     -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) inset;
-    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
 .search-user-window {

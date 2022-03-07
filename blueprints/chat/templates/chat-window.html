@@ -21,18 +21,11 @@
     <div class="chat-list-items" id="chat-list-items">
 
         {% if recipient %}
-            <script type="text/javascript">let socket = io();
-            socket.on('connect', function () {
-                socket.emit('join', {chat: '{{ current_chat.id }}'});
-            });
-            socket.on('received_message', function (data) {
-                data.me = (data.sender.id === {{ recipient.id }}) ? false : true;
-                createMessage(data);
-            })</script>
             {% for chat in chats %}
-                    <div class="user-item{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}" id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
-                        <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
-                    </div>
+                <div class="user-item{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}"
+                     id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
+                    <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+                </div>
             {% endfor %}
         {% else %}
             {% for chat in chats %}
@@ -52,13 +45,24 @@
         <input type="search" class="search-line" id="search-message" placeholder="Поиск сообщений">
 
         <div class="chat-log" id="chat-log">
+            <script type="text/javascript">
+                socket.on('received_message', function (data) {
+                    if (data.chat_id == {{ current_chat.id }}) {
+                        data.me = (data.sender.id === {{ recipient.id }}) ? false : true;
+                        createMessage(data);
+                    }
+                });
+            </script>
             {% for message in current_chat.messages %}
                 <div class="message{% if message.user.id == current_user.id %} me{% endif %}">
-                    <a class="message-from" href="../profile/{{ message.user.id }}">{{ message.user.login }} <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time></a>
+                    <a class="message-from" href="../profile/{{ message.user.id }}">{{ message.user.login }}
+                        <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time>
+                    </a>
 
                     <div class="message-content">{{ message.content }}</div>
                 </div>
             {% endfor %}
+            <script type="text/javascript">document.getElementById('chat-log').scrollTo(0, document.getElementById('chat-log').scrollHeight);</script>
         </div>
 
         <div class="chat-input" id="chat-input" send_to="{{ recipient.id }}">

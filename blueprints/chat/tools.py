@@ -2,7 +2,7 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import db
-from models import User, Chat, ChatParticipation, Message
+from models import User, Chat, ChatParticipation, Message, Notification
 
 
 def create_chat(data):
@@ -42,3 +42,17 @@ def add_message(chat, content):
         print(error)
 
     return message.serialize
+
+
+def new_chat_notification(user, title, content):
+    notification = None
+    try:
+        notification = Notification(title=title, content=content)
+        user.notifications.append(notification)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        error = str(e)
+        print(error)
+
+    return notification

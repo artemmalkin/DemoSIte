@@ -4,16 +4,45 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/css/style.css" type="text/css"/>
     <title>{{ title }}</title>
+    {% if current_user.is_authenticated %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+                integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+                crossorigin="anonymous"></script>
+        <script type="text/javascript">let socket = io();
+        socket.on('connect', function () {
+            socket.emit('join');
+        });
+        socket.on('received_message', function (data) {
+            console.log(data)
+            if (data.sender.id !== {{ current_user.id }}) {
+                document.getElementById('notification-icon').setAttribute('src', "/static/favicon/notification-active.svg")
+                let count = document.getElementById('notification-count')
+                const count_int = (count.innerText === '') ? 0 : (count.innerText === '99+') ? 99 : parseInt(count.innerText);
+                count.innerText = (count_int === 99) ? '99+' : count_int + 1;
+            }
+            socket.emit('new_notification', data);
+        })</script>
+    {% endif %}
 </head>
 <body>
 <header>
     <div class="menu-main">
         <div class="button-header"><a href="/">Главная</a></div>
-        <div class="button-header"><a href="/chat">Чат</a></div>
+        {% if current_user.is_authenticated %}
+            <div class="button-header"><a href="/chat">Чат</a></div>
+        {% endif %}
     </div>
     <div class="title">Demo Website</div>
     <div class="menu-auth">
-        {% if current_user.login %}
+        {% if current_user.is_authenticated %}
+            <div class="button-ico">
+                <img class="notification" id="notification-icon"
+                     src="/static/favicon/notification{% if current_user.notifications %}-active{% endif %}.svg">
+                <div class="notification-count" id="notification-count">
+                    {% if current_user.notifications|count != 0 %}{% if current_user.notifications|count <= 99 %}
+                        {{ current_user.notifications|count }}{% else %}99+{% endif %}{% endif %}</div>
+            </div>
+
             <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
             <div class="button-header"><a href="/logout">Выйти</a></div>
         {% else %}

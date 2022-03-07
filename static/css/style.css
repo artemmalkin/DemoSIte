@@ -1,9 +1,13 @@
+
+:root {
+    --vh: 30vh;
+}
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background-color: #ebebeb;
 }
-
 
 /* HEADER */
 
@@ -56,6 +60,49 @@ header {
     color: black;
 }
 
+.notification-menu {
+    transition: .2s;
+    display: none;
+    position: absolute;
+    right: 1em;
+    top: 90%;
+    width: 20em;
+    height: auto;
+    max-height: var(--vh);
+    padding: 1em;
+    background-color: white;
+    -webkit-box-shadow: 0px 9px 28px -1px rgba(0,0,0,0.3);
+    box-shadow: 0px 9px 28px -1px rgba(0,0,0,0.3);
+    border-radius: 0.5em;
+}
+
+.active {
+    display: block;
+}
+
+#ntf-mn-arrow {
+    position: absolute;
+    left: calc(57%);
+    top: -.5em;
+    transform: rotate(45deg);
+}
+
+.notification-list {
+    overflow: auto;
+    max-height: var(--vh);
+}
+
+.ntf-item {
+    background-color: #ebebeb;
+    border-radius: .2em;
+    margin: .4em 0;
+    padding: .2em;
+}
+
+.ntf-title {
+    display: flex;
+    justify-content: space-between;
+}
 
 /* FIELDS */
 
@@ -95,7 +142,7 @@ header {
 
 /* button-ico */
 
-.notification {
+#notification-icon {
     position: absolute;
 }
 

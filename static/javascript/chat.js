@@ -1,5 +1,5 @@
 const chat_window = document.getElementById('chat-window');
-const chat_log = document.getElementById('chat-log')
+const chat_log = document.getElementById('chat-log');
 
 chat_window.addEventListener("click", function (event) {
 

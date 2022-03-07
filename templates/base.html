@@ -33,16 +33,28 @@
         {% endif %}
     </div>
     <div class="title">Demo Website</div>
-    <div class="menu-auth">
+    <div class="menu-auth" id="menu-auth">
         {% if current_user.is_authenticated %}
-            <div class="button-ico">
-                <img class="notification" id="notification-icon"
+            <script src="/static/javascript/navigation.js"></script>
+            <div class="button-ico" id="notification">
+                <img id="notification-icon"
                      src="/static/favicon/notification{% if current_user.notifications %}-active{% endif %}.svg">
                 <div class="notification-count" id="notification-count">
                     {% if current_user.notifications|count != 0 %}{% if current_user.notifications|count <= 99 %}
                         {{ current_user.notifications|count }}{% else %}99+{% endif %}{% endif %}</div>
             </div>
+            <div class="notification-menu" id="notification-menu">
+                <svg id="ntf-mn-arrow" height="1em" width="1em"><rect x="0" y="0" width="30" height="30" fill="white"/></svg>
+                <div class="notification-list">
+                    {% for notification in current_user.notifications|reverse %}
+                    <div class="ntf-item">
+                        <div class="ntf-title">{{ notification.title }}<div class="ntf-date">{{ notification.date.strftime("%H:%M") }}</div></div>
 
+                        <div class="ntf-content">{{ notification.content }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
             <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
             <div class="button-header"><a href="/logout">Выйти</a></div>
         {% else %}

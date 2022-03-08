@@ -48,6 +48,20 @@ class Notification(db.Model, UserMixin):
         return f"id: {self.id} title: {self.title}"
 
 
+class MessageNotification(db.Model, UserMixin):
+    __tablename__ = 'message_notifications'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    chat_id = db.Column(db.Integer)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    message_id = db.Column(db.Integer, db.ForeignKey('messages.id'), primary_key=True, unique=True)
+
+    recipient = db.relationship('User', backref='message_notifications')
+    message = db.relationship('Message')
+
+    def __repr__(self):
+        return f"id: {self.id} recipient: {self.recipient} message: {self.message}"
+
+
 class Chat(db.Model, UserMixin):
     __tablename__ = 'chats'
     id = db.Column(db.Integer, primary_key=True)

@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import login_manager, app, db
 from forms import RegisterOrLoginForm
+from methods import if_get_request
 from models import User
 
 
@@ -31,7 +32,7 @@ def http_error_handler(e):
 
 @app.route('/')
 def index():
-    return render_template('index.html', users=User.query.all())
+    return if_get_request(render_template('index.html', users=User.query.all()))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -83,4 +84,4 @@ def logout():
 
 @app.route('/profile/<int:user_id>')
 def profile(user_id: int):
-    return render_template('profile.html', user=User.query.get_or_404(user_id), users=User.query.all())
+    return if_get_request(render_template('profile.html', user=User.query.get_or_404(user_id), users=User.query.all()))

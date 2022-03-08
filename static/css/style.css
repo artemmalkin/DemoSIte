@@ -88,6 +88,8 @@ header {
 }
 
 .notification-list {
+    display: flex;
+    justify-content: center;
     overflow: auto;
     max-height: var(--vh);
 }
@@ -100,8 +102,14 @@ header {
 }
 
 .ntf-title {
+    font-size: 1.1em;
+    color: rgba(105, 161, 29, 0.78);
     display: flex;
     justify-content: space-between;
+}
+
+.ntf-content {
+
 }
 
 /* FIELDS */

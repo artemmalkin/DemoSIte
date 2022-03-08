@@ -1,0 +1,20 @@
+{% if current_user.notifications or current_user.message_notifications %}
+{% if current_user.message_notifications %}
+    <div class="ntf-item">
+        <div class="ntf-title">Новое сообщение!
+            <div class="ntf-date">{% set last_ntf = current_user.message_notifications|last %}{{ last_ntf.message.date.strftime("%H:%M") }}</div>
+        </div>
+        <div class="ntf-content">Непрочитанных сообщений в чате: {{ current_user.message_notifications|count }}</div>
+    </div>
+{% endif %}
+{% for notification in current_user.notifications|reverse %}
+    <div class="ntf-item">
+        <div class="ntf-title">{{ notification.title }}
+            <div class="ntf-date">{{ notification.date.strftime("%H:%M") }}</div>
+        </div>
+        <div class="ntf-content">{{ notification.content }}</div>
+    </div>
+{% endfor %}
+{% else %}
+Уведомлений нет.
+{% endif %}

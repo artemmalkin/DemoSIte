@@ -61,19 +61,20 @@ function searchUsers(event = KeyboardEvent) {
     event.preventDefault();
     if (event.code === "Enter") {
         const value = document.getElementById(`search-users-for-new-chat`).value;
-
-        const url = `?q=${value}`;
-
-        document.getElementById(`search-user-result`).innerHTML = Get(url)
+        let get = Get(`?q=${value}`)
+        document.getElementById(`search-user-result`).innerHTML = '<img src="./static/loading.gif" alt="loading..."  width="60" />'
+        get.onload = function () {
+         document.getElementById(`search-user-result`).innerHTML = get.responseText
+        };
     }
 
 }
 
 function Get(theUrl) {
-    let xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", theUrl, false);
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
+    let xml = new XMLHttpRequest();
+    xml.open("GET", theUrl, true);
+    xml.send(null);
+    return xml;
 }
 
 function createMessage(data) {

@@ -15,6 +15,11 @@ menu_auth.addEventListener("click", function (event) {
 
             } else {
                 ntf_menu.classList.add('active')
+                let get = Get('?ntfs')
+                document.getElementById('notification-list').innerHTML = '<img src="./static/loading.gif" alt="loading..."  width="50" />'
+                get.onload = function () {
+                 document.getElementById('notification-list').innerHTML = get.responseText
+                };
             }
 
             break
@@ -25,3 +30,10 @@ menu_auth.addEventListener("click", function (event) {
 
     }
 });
+
+function Get(theUrl) {
+    let xml = new XMLHttpRequest();
+    xml.open("GET", theUrl, true);
+    xml.send(null);
+    return xml;
+}

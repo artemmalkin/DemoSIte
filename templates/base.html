@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/style.css" type="text/css"/>
+  {# TODO: url_for #}  <link rel="stylesheet" href="../static/css/style.css" type="text/css"/>
     <title>{{ title }}</title>
     {% if current_user.is_authenticated %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
@@ -12,9 +12,10 @@
         socket.on('connect', function () {
             socket.emit('join');
         });
+        {# TODO: сокеты вне хедера должны быть #}
         socket.on('received_message', function (data) {
             if (data.sender.id !== {{ current_user.id }}{% if current_chat %} & data.chat_id !== {{ current_chat.id }}{% endif %}) {
-                document.getElementById('notification-icon').setAttribute('src', "/static/icons/notification-active.svg")
+              {# TODO: url_for #}  document.getElementById('notification-icon').setAttribute('src', "/static/icons/notification-active.svg")
                 let count = document.getElementById('notification-count')
                 const count_int = (count.innerText === '') ? 0 : (count.innerText === '99+') ? 99 : parseInt(count.innerText);
                 count.innerText = (count_int === 99) ? '99+' : count_int + 1;
@@ -25,21 +26,21 @@
 <body>
 <header>
     <div class="menu-main">
-        <div class="button-header"><a href="/">Главная</a></div>
+    {# TODO: url_for #}    <div class="button-header"><a href="/">Главная</a></div>
         {% if current_user.is_authenticated %}
-            <div class="button-header"><a href="/chat">Чат</a></div>
+   {# TODO: url_for #}         <div class="button-header"><a href="/chat">Чат</a></div>
         {% endif %}
     </div>
     <div class="title">Demo Website</div>
     <div class="menu-auth" id="menu-auth">
         {% if current_user.is_authenticated %}
-            <script src="/static/javascript/navigation.js"></script>
+        {# TODO: url_for #}    <script src="/static/javascript/navigation.js"></script>
             <div class="button-ico" id="notification">
                 <img id="notification-icon"
-                     src="/static/icons/notification{% if current_user.notifications or current_user.message_notifications %}-active{% endif %}.svg">
+        {# TODO: url_for #}             src="/static/icons/notification{% if current_user.notifications or current_user.message_notifications %}-active{% endif %}.svg">
                 <div class="notification-count" id="notification-count">
-                    {% if current_user.notifications|count + current_user.message_notifications|count <= 99 %}
-                        {{ current_user.notifications|count + current_user.message_notifications|count }}
+                    {% if current_user.notifications|count + current_user.message_notifications|count <= 99 %}{# TODO: Четыре грёбаных оператора count #}
+                        {{ current_user.notifications|count + current_user.message_notifications|count }}{# TODO: Целых четыре раза одно и тоже действие, а если у тебя 1000 уведослений??? - сколько запросов? - 4 по 1000!!! мак комбо нахуй 5 по 50 блять, когда сукак можно было один раз по 50, ахуеное было бы маккомбо - однозначно!!!!!!!! ЕЩЁ БЛЯТЬ И В БАЗОВОМ ШАБЛОНЕ, ХОТЯ БЫ ТУТ БЛЯТЬ ПОСТАРАЛСЯ СУКА ПЕРЕД ТЕМ КАК МЕНЯ ЗВАТЬ ПРОВЕРЯТЬ СУКА. ЕСЛИ ТЫ ДУМАЕШЬ ЧТО МНЕ В КАЙФ БУДЕТ КАЖДЫЙ ТВОЙ КОММИТ ПЕРЕПРОВЕРЯТЬ - ТО ТЫ ПРОСТО АХРЕНЕТЬ КАК ОШИБАЕШЬСЯ#}
                     {% else %}
                         99+
                     {% endif %}</div>
@@ -52,11 +53,11 @@
 
                 </div>
             </div>
-            <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
-            <div class="button-header"><a href="/logout">Выйти</a></div>
+      {# TODO: url_for #}      <a class="avatar" href="/profile/{{ current_user.id }}">{{ current_user.login.upper()[0] }}</a>
+     {# TODO: url_for #}       <div class="button-header"><a href="/logout">Выйти</a></div>
         {% else %}
-            <div class="button-header"><a href="/login">Вход</a></div>
-            <div class="button-header"><a href="/register">Регистрация</a></div>
+     {# TODO: url_for #}       <div class="button-header"><a href="/login">Вход</a></div>
+     {# TODO: url_for #}       <div class="button-header"><a href="/register">Регистрация</a></div>
         {% endif %}
     </div>
 </header>
@@ -73,7 +74,8 @@
         <div class="content-block">
             <h3>Пользователи</h3>
             {% for user in users %}
-                <p><a href="/profile/{{ user.id }}">{{ user.login }}</a></p>
+        {# TODO: url_for #}        <p><a href="/profile/{{ user.id }}">{{ user.login }}</a></p>{# TODO: url_for #}
+
             {% endfor %}
         </div>
     {% endblock right_content %}

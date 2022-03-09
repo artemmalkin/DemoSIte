@@ -8,6 +8,7 @@ from models import User, ChatParticipation, Chat
 
 
 def if_get_request(template):
+    # TODO: Это чё за хуйне?
     if request.args:
         for key in request.args.keys():
             if key in methods:
@@ -19,18 +20,18 @@ def if_get_request(template):
 
 class ChatMethods:
 
-    def search_user(data):
+    def search_user(data): # TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
         response = None
         if data.get('q'):
-            response = User.query.filter(User.login.contains(data.get('q')))
+            response = User.query.filter(User.login.contains(data.get('q')))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
             response = [x.serialize for x in response.all() if x.id != current_user.id] if response.all() else ''
         return render_template('user-list.html', result=response)
 
-    def chat(data):
+    def chat(data): # TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
         context = dict()
 
         try:
-            recipient = User.query.get(int(data.get('c')))
+            recipient = User.query.get(int(data.get('c')))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
             if recipient.id == current_user.id:
                 raise ValueError
 
@@ -59,13 +60,13 @@ class ChatMethods:
 
         return render_template('chat.html', **context)
 
-    def get_messages(data):
+    def get_messages(data):# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
         response = None
 
         try:
-            count = int(data.get('m'))
+            count = int(data.get('m'))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
             messages = ChatParticipation.query.filter_by(sender_id=current_user.id,
-                                                         recipient_id=int(data.get('r_id'))).one().chat.messages[
+                                                         recipient_id=int(data.get('r_id'))).one().chat.messages[# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
                        -count:-count + 50]
             message_list = [x.serialize for x in messages]
             response = {'data': {'me': current_user.id}, 'messages': message_list}
@@ -75,7 +76,7 @@ class ChatMethods:
         return response
 
 
-def get_notifications(data):
+def get_notifications(data): # НАХУЙ ТУТ data?
     return render_template('notification-list.html')
 
 

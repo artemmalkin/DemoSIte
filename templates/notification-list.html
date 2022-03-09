@@ -1,13 +1,13 @@
-{% if current_user.notifications or current_user.message_notifications %}
-{% if current_user.message_notifications %}
+{% if current_user.notifications or current_user.message_notifications %} {# TODO: current_user.notifications 1 #}{# TODO: current_user.message_notifications 1 #}
+{% if current_user.message_notifications %}{# TODO: current_user.message_notifications 2 #}
     <div class="ntf-item">
         <div class="ntf-title">Новое сообщение!
-            <div class="ntf-date">{% set last_ntf = current_user.message_notifications|last %}{{ last_ntf.message.date.strftime("%H:%M") }}</div>
+            <div class="ntf-date">{% set last_ntf = current_user.message_notifications|last %}{{ last_ntf.message.date.strftime("%H:%M") }}</div>{# TODO: current_user.message_notifications 3 #}
         </div>
-        <div class="ntf-content">Непрочитанных сообщений в чате: {{ current_user.message_notifications|count }}</div>
+        <div class="ntf-content">Непрочитанных сообщений в чате: {{ current_user.message_notifications|count }}</div>{# TODO: current_user.message_notifications 4 #}
     </div>
 {% endif %}
-{% for notification in current_user.notifications|reverse %}
+{% for notification in current_user.notifications|reverse %}{# TODO: current_user.notifications 2 #}
     <div class="ntf-item">
         <div class="ntf-title">{{ notification.title }}
             <div class="ntf-date">{{ notification.date.strftime("%H:%M") }}</div>

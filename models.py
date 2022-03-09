@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 
 from app import db
 
@@ -11,8 +11,19 @@ class ChatParticipation(db.Model, UserMixin):
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     recipient_id = db.Column(db.Integer)
 
-    user = db.relationship('User', backref='chat_participations')
-    chat = db.relationship('Chat', backref='user_participations')
+    user = db.relationship('User',
+                           backref='chat_participations')  # TODO: ПОДЧЕРКИВАНИЕ ВИДИШЬ НЕТ ИЛИ ОНО ТЕБЕ ПО РОФЛУ ВЫВОДИТЬСЯ?
+    chat = db.relationship('Chat',
+                           backref='user_participations')  # TODO: ПОДЧЕРКИВАНИЕ ВИДИШЬ НЕТ ИЛИ ОНО ТЕБЕ ПО РОФЛУ ВЫВОДИТЬСЯ?
+
+    # TODO: струтура должна выглядеть вот так
+    # chat_id = db.Column(db.Integer, db.ForeignKey('chats.id'), primary_key=True)
+    # chat = db.relationship('Chat', backref='user_participations')
+    #
+    # sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    # user = db.relationship('User', backref='chat_participations')
+
+    # TODO: Какого хуя user привязан к sender_id????? - использовать (user, user_id) или (sender, sender_id) не?
 
 
 class User(db.Model, UserMixin):

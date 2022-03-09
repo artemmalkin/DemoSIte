@@ -10,12 +10,12 @@ from methods import if_get_request
 from models import User
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    try:
-        return User.query.get(user_id)
-    except Exception:
-        return None
+@login_manager.user_loader # TODO: Это чё за хуйне?
+def load_user(user_id): # TODO: Это чё за хуйне?
+    try:# TODO: Это чё за хуйне?
+        return User.query.get(user_id)# TODO: Это чё за хуйне?
+    except Exception:# TODO: Это чё за хуйне?
+        return None# TODO: Это чё за хуйне?
 
 
 @app.errorhandler(404)
@@ -46,25 +46,25 @@ def signup():
                                     password=generate_password_hash(request.form.get('password'))))
                 db.session.commit()
                 flash("Вы успешно зарегистрировались!")
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                error = str(e.__dict__['orig'])
-                print(error)
-                if "already exists" in error:
-                    flash(f"Такой логин уже зарегистрирован, повторите попытку.")
+            except SQLAlchemyError as e: # TODO: ты wtforms по рофлу используешь?
+                db.session.rollback() # TODO: ты wtforms по рофлу используешь?
+                error = str(e.__dict__['orig']) # TODO: ты wtforms по рофлу используешь?
+                print(error) # TODO: ты wtforms по рофлу используешь?
+                if "already exists" in error: # TODO: ты wtforms по рофлу используешь?
+                    flash(f"Такой логин уже зарегистрирован, повторите попытку.") # TODO: ты wtforms по рофлу используешь?
         context.update(form=form, users=User.query.all())
         return render_template('register.html', **context)
     return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login():# TODO: функция в целом пздц
     context = dict()
     if current_user.is_anonymous:
         form = RegisterOrLoginForm(request.form)
         if request.method == 'POST':
             user = db.session.query(User).filter(User.login == form.login.data).first()
-            if user and check_password_hash(user.password, form.password.data):
+            if user and check_password_hash(user.password, form.password.data): # TODO: ты wtforms по рофлу используешь?
                 login_user(user, remember=False)
                 return redirect(url_for('index'))
             flash("Неверный логин или пароль")

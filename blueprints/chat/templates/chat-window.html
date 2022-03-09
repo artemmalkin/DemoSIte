@@ -23,7 +23,7 @@
             <div class="user-item
                     {% if recipient %}{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}{% endif %}"
                  id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
-                <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+            {# TODO: url_for #}    <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
                 {% if chat.id in current_user.message_notifications|map(attribute='message')|map(attribute='chat')|map(attribute='id')|list %}
                     (непрочитанно)
                 {% endif %}

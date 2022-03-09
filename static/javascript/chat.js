@@ -57,6 +57,31 @@ chat_window.addEventListener("click", function (event) {
     }
 });
 
+let messages_count = 50
+
+chat_log.addEventListener('scroll', function (event) {
+    if (chat_log.scrollTop === 0) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const r_id = urlParams.get('c');
+
+        messages_count += 50
+
+        let get = Get(`?m=${messages_count}&r_id=${r_id}`)
+
+        get.onload = function () {
+            const response = JSON.parse(get.response)
+            const data = response['data']
+            const messages = response['messages'].reverse()
+            let scrollH = chat_log.scrollHeight
+            for (let message in messages) {
+                chat_log.prepend(createMessage(data, messages[message]))
+            }
+            chat_log.scrollTo(0, chat_log.scrollHeight - scrollH)
+        };
+    }
+
+})
+
 function searchUsers(event = KeyboardEvent) {
     event.preventDefault();
     if (event.code === "Enter") {
@@ -64,7 +89,7 @@ function searchUsers(event = KeyboardEvent) {
         let get = Get(`?q=${value}`)
         document.getElementById(`search-user-result`).innerHTML = '<img src="./static/loading.gif" alt="loading..."  width="60" />'
         get.onload = function () {
-         document.getElementById(`search-user-result`).innerHTML = get.responseText
+            document.getElementById(`search-user-result`).innerHTML = get.responseText
         };
     }
 
@@ -77,30 +102,31 @@ function Get(theUrl) {
     return xml;
 }
 
-function createMessage(data) {
-    let message = document.createElement('div');
+function createMessage(data, message) {
+    let message_item = document.createElement('div');
     let message_from = document.createElement('a');
     let message_time = document.createElement('time')
     let message_content = document.createElement('div')
 
-    message.className = 'message';
+    message_item.className = 'message';
 
     message_from.className = 'message-from';
-    message_from.href = `../profile/${data.sender.id}`;
-    message_time.dateTime = data.date[0];
-    message_time.innerText = ` ${data.date[1]}`;
-    message_from.innerHTML = data.sender.login;
+    message_from.href = `../profile/${message.sender.id}`;
+    message_time.dateTime = message.date[0];
+    message_time.innerText = ` ${message.date[1]}`;
+    message_from.innerHTML = message.sender.login;
+
     message_from.appendChild(message_time)
 
-    if (data.me) {
-        message.classList.add('me');
+    if (data.me === message.sender.id) {
+        message_item.classList.add('me');
     }
 
-    message_content.innerText = data.content;
+    message_content.innerText = message.content;
     message_content.className = 'message-content';
 
-    message.appendChild(message_from);
-    message.appendChild(message_content);
-    chat_log.append(message);
-    chat_log.scrollTo(0, chat_log.scrollHeight);
+    message_item.appendChild(message_from);
+    message_item.appendChild(message_content);
+
+    return message_item
 }

@@ -14,7 +14,7 @@
         });
         socket.on('received_message', function (data) {
             if (data.sender.id !== {{ current_user.id }}{% if current_chat %} & data.chat_id !== {{ current_chat.id }}{% endif %}) {
-                document.getElementById('notification-icon').setAttribute('src', "/static/favicon/notification-active.svg")
+                document.getElementById('notification-icon').setAttribute('src', "/static/icons/notification-active.svg")
                 let count = document.getElementById('notification-count')
                 const count_int = (count.innerText === '') ? 0 : (count.innerText === '99+') ? 99 : parseInt(count.innerText);
                 count.innerText = (count_int === 99) ? '99+' : count_int + 1;
@@ -36,7 +36,7 @@
             <script src="/static/javascript/navigation.js"></script>
             <div class="button-ico" id="notification">
                 <img id="notification-icon"
-                     src="/static/favicon/notification{% if current_user.notifications or current_user.message_notifications %}-active{% endif %}.svg">
+                     src="/static/icons/notification{% if current_user.notifications or current_user.message_notifications %}-active{% endif %}.svg">
                 <div class="notification-count" id="notification-count">
                     {% if current_user.notifications|count + current_user.message_notifications|count <= 99 %}
                         {{ current_user.notifications|count + current_user.message_notifications|count }}

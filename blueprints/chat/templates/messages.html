@@ -1,0 +1,9 @@
+{% for message in current_chat.messages[-count:-count + 50] %}
+    <div class="message{% if message.user.id == current_user.id %} me{% endif %}">
+        <a class="message-from" href="../profile/{{ message.user.id }}">{{ message.user.login }}
+            <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time>
+        </a>
+
+        <div class="message-content">{{ message.content }}</div>
+    </div>
+{% endfor %}

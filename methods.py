@@ -11,7 +11,7 @@ def if_get_request(template):
     if request.args:
         for key in request.args.keys():
             if key in methods:
-                return methods[key](req=request.args.get(key))
+                return methods[key](data=request.args)
             else:
                 return template
     return template
@@ -19,17 +19,18 @@ def if_get_request(template):
 
 class ChatMethods:
 
-    def search_user(req: str, result=''):
-        if req:
-            result = User.query.filter(User.login.contains(req))
-            result = [x.serialize for x in result.all() if x.id != current_user.id] if result.all() else ''
-        return render_template('user-list.html', result=result)
+    def search_user(data):
+        response = None
+        if data.get('q'):
+            response = User.query.filter(User.login.contains(data.get('q')))
+            response = [x.serialize for x in response.all() if x.id != current_user.id] if response.all() else ''
+        return render_template('user-list.html', result=response)
 
-    def chat(req: int):
+    def chat(data):
         context = dict()
 
         try:
-            recipient = User.query.get(int(req))
+            recipient = User.query.get(int(data.get('c')))
             if recipient.id == current_user.id:
                 raise ValueError
 
@@ -58,13 +59,29 @@ class ChatMethods:
 
         return render_template('chat.html', **context)
 
+    def get_messages(data):
+        response = None
 
-def get_notifications(req):
+        try:
+            count = int(data.get('m'))
+            messages = ChatParticipation.query.filter_by(sender_id=current_user.id,
+                                                         recipient_id=int(data.get('r_id'))).one().chat.messages[
+                       -count:-count + 50]
+            message_list = [x.serialize for x in messages]
+            response = {'data': {'me': current_user.id}, 'messages': message_list}
+        except ValueError:
+            pass
+
+        return response
+
+
+def get_notifications(data):
     return render_template('notification-list.html')
 
 
 methods = {
     "q": ChatMethods.search_user,
     "c": ChatMethods.chat,
+    "m": ChatMethods.get_messages,
     "ntfs": get_notifications
 }

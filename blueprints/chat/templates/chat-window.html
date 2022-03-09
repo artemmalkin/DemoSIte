@@ -19,15 +19,16 @@
     </div>
 
     <div class="chat-list-items" id="chat-list-items">
-            {% for chat in current_user.chats %}
-                <div class="user-item{% if recipient %}{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}{% endif %}"
-                     id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
-                    <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
-                    {% if chat.id in current_user.message_notifications|map(attribute='message')|map(attribute='chat')|map(attribute='id')|list %}
+        {% for chat in current_user.chats %}
+            <div class="user-item
+                    {% if recipient %}{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}{% endif %}"
+                 id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
+                <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+                {% if chat.id in current_user.message_notifications|map(attribute='message')|map(attribute='chat')|map(attribute='id')|list %}
                     (непрочитанно)
-                    {% endif %}
-                </div>
-            {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 
 </div>
@@ -35,21 +36,23 @@
 <div class="chat-message-list">
 
     {% if recipient %}
-        <input type="search" class="search-line" id="search-message" placeholder="Поиск сообщений">
+        <script type="text/javascript">
+            socket.on('received_message', function (message) {
 
-        <div class="chat-log" id="chat-log">
-            <script type="text/javascript">
-                socket.on('received_message', function (data) {
-                    if (data.chat_id == {{ current_chat.id }}) {
-                        data.me = (data.sender.id === {{ recipient.id }}) ? false : true;
-                        if (data.me === false) {
-                            socket.emit('remove chat notification', {chat_id: data.chat_id})
-                        }
-                        createMessage(data);
+                if (message.chat_id == {{ current_chat.id }}) {
+                    const data = {me: {{ current_user.id }}}
+                    if (message.sender.id !== {{ recipient.id }}) {
+                        socket.emit('remove chat notification', {chat_id: message.chat_id})
                     }
-                });
-            </script>
-            {% for message in current_chat.messages %}
+                    chat_log.append(createMessage(data, message))
+                    chat_log.scrollTo(0, chat_log.scrollHeight)
+                }
+            });
+        </script>
+        <input type="search" class="search-line" id="search-message" placeholder="Поиск сообщений">
+        <div class="chat-log" id="chat-log">
+
+            {% for message in current_chat.messages[-50:] %}
                 <div class="message{% if message.user.id == current_user.id %} me{% endif %}">
                     <a class="message-from" href="../profile/{{ message.user.id }}">{{ message.user.login }}
                         <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time>

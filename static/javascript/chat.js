@@ -86,8 +86,7 @@ function searchUsers(event = KeyboardEvent) {
     event.preventDefault();
     if (event.code === "Enter") {
         const value = document.getElementById(`search-users-for-new-chat`).value;
-        let get = Get(`?q=${value}`)
-        document.getElementById(`search-user-result`).innerHTML = '<img src="./static/loading.gif" alt="loading..."  width="60" />'
+        let get = Get(`?q=${value}&page=1`, document.getElementById(`search-user-result`))
         get.onload = function () {
             document.getElementById(`search-user-result`).innerHTML = get.responseText
         };
@@ -95,10 +94,11 @@ function searchUsers(event = KeyboardEvent) {
 
 }
 
-function Get(theUrl) {
+function Get(theUrl, loading_element) {
     let xml = new XMLHttpRequest();
     xml.open("GET", theUrl, true);
     xml.send(null);
+    loading_element.innerHTML = loading.outerHTML
     return xml;
 }
 

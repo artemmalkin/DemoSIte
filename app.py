@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 
 from config import Configuration
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 app.config.from_object(Configuration)
 

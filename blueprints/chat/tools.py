@@ -58,7 +58,7 @@ def new_chat_notification(recipient, message):
     return notification
 
 
-def remove_chat_notification(chat_id):
+def set_chat_read(chat_id):
     success = False
     try:
         MessageNotification.query.filter_by(chat_id=chat_id, recipient_id=current_user.id).delete()

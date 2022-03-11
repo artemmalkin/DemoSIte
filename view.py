@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import login_manager, app, db
 from forms import RegisterOrLoginForm
-from methods import if_get_request
+from methods import handle_request
 from models import User
 
 
@@ -32,11 +32,11 @@ def http_error_handler(e):
 
 @app.route('/')
 def index():
-    return if_get_request(render_template('index.html', users=User.query.all()))
+    return handle_request(render_template('index.html', users=User.query.all()))
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def signup():
+def register():
     context = dict()
     if current_user.is_anonymous:
         form = RegisterOrLoginForm(request.form)
@@ -84,4 +84,4 @@ def logout():
 
 @app.route('/profile/<int:user_id>')
 def profile(user_id: int):
-    return if_get_request(render_template('profile.html', user=User.query.get_or_404(user_id), users=User.query.all()))
+    return handle_request(render_template('profile.html', user=User.query.get_or_404(user_id), users=User.query.all()))

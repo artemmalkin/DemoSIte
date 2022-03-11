@@ -2,87 +2,98 @@ import sqlalchemy
 from flask import render_template, request
 from flask_login import current_user
 
-from blueprints.chat.tools import remove_chat_notification, create_chat
+from blueprints.chat.tools import create_chat, set_chat_read
 from forms import TypeMessageForm
 from models import User, ChatParticipation, Chat
 
 
-def if_get_request(template):
-    # TODO: Это чё за хуйне?
-    if request.args:
-        for key in request.args.keys():
-            if key in methods:
-                return methods[key](data=request.args)
-            else:
-                return template
+def handle_request(template):
+    """
+    Parse requests from the client and return response back
+
+    Example:
+        @app.route('/')
+
+        def index():
+            return handle_request(render_template('index.html'))
+
+    :param template: (render_template function) if no response is found - return that
+    :return: template or response
+    """
+    for key in request.args.keys():
+        if key in methods:
+            return methods[key](request.args)
     return template
 
 
-class ChatMethods:
+def search_user(data):
+    # TODO загрузка по номеру страницы
+    response = None
+    page = 1
 
-    def search_user(data): # TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-        response = None
-        if data.get('q'):
-            response = User.query.filter(User.login.contains(data.get('q')))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-            response = [x.serialize for x in response.all() if x.id != current_user.id] if response.all() else ''
-        return render_template('user-list.html', result=response)
-
-    def chat(data): # TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-        context = dict()
-
+    if data.get('q'):
         try:
-            recipient = User.query.get(int(data.get('c')))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-            if recipient.id == current_user.id:
-                raise ValueError
-
-        except ValueError:
-            recipient = None
-
-        context.update(recipient=recipient)
-
-        try:
-            chat_id = ChatParticipation.query.filter_by(recipient_id=recipient.id,
-                                                        sender_id=current_user.id).one().chat_id
-            current_chat = Chat.query.filter_by(id=chat_id).one()
-
-            context.update(current_chat=current_chat)
-
-            remove_chat_notification(chat_id)
-        except UnboundLocalError:
-            pass
-        except AttributeError:
-            pass
-        except sqlalchemy.exc.NoResultFound:
-            context.update(current_chat=create_chat(data={'recipient': recipient.id}))
-
-        context.update(users=User.query.all(),
-                       type_message_form=TypeMessageForm(request.form))
-
-        return render_template('chat.html', **context)
-
-    def get_messages(data):# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-        response = None
-
-        try:
-            count = int(data.get('m'))# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-            messages = ChatParticipation.query.filter_by(sender_id=current_user.id,
-                                                         recipient_id=int(data.get('r_id'))).one().chat.messages[# TODO: ПОЧИТАЙ ЕБУЧУЮ ДОКУМЕНТАЦИЮ ПИТОНА - ТОГДА ТЫ УЗНАЕШЬ КАК ИХ ПИСАТЬ! ТЕБЕ СЛОВО data ЖЁЛТЫМ БЛЯТЬ ПАЙЧАРМ ПОДЧЕРКИВАТ! НЕ ХОЧЕШЬ ЧИТАТЬ ДОКУМЕНТАЦИЮ - НАДЕВИ МЫШКУ НА ЖЕЛТЬОЕ ЕБАНОЕ ПОДЖЧЕРКИВАНИЕ
-                       -count:-count + 50]
-            message_list = [x.serialize for x in messages]
-            response = {'data': {'me': current_user.id}, 'messages': message_list}
+            page = int(data.get('page'))
         except ValueError:
             pass
+        response = User.query.filter(User.login.contains(data.get('q'))).paginate(page, 10, False)
 
-        return response
+    return render_template('user-list.html', response=response)
 
 
-def get_notifications(data): # НАХУЙ ТУТ data?
+def set_current_chat(data):
+    context = dict()
+    current_chat = None
+    recipient = None
+
+    try:
+        recipient = User.query.get_or_404(int(data.get('c')))
+        if recipient.id == current_user.id:
+            raise ValueError
+
+        chat_id = ChatParticipation.query.filter_by(recipient_id=recipient.id,
+                                                    sender_id=current_user.id).one().chat_id
+        chat = Chat.query.filter_by(id=chat_id).one()
+        current_chat = chat
+
+        set_chat_read(chat_id)
+    except ValueError:
+        pass
+    except sqlalchemy.exc.NoResultFound:
+        current_chat = create_chat(data={'recipient': recipient.id})
+
+    context.update(users=User.query.all(),
+                   type_message_form=TypeMessageForm(request.form),
+                   current_chat=current_chat,
+                   current_recipient=recipient)
+
+    return render_template('chat.html', **context)
+
+
+def get_messages(data):
+    response = None
+
+    try:
+        count = int(data.get('m'))
+        messages = ChatParticipation.query.filter_by(sender_id=current_user.id,
+                                                     recipient_id=int(data.get('r_id'))).one().chat.messages[
+                   -count:-count + 50]
+        message_list = [x.serialize for x in messages]
+        response = {'data': {'me': current_user.id}, 'messages': message_list}
+    except ValueError:
+        pass
+
+    return response
+
+
+def get_notifications(data):
+    # TODO загрузка по номеру страницы
     return render_template('notification-list.html')
 
 
 methods = {
-    "q": ChatMethods.search_user,
-    "c": ChatMethods.chat,
-    "m": ChatMethods.get_messages,
+    "q": search_user,
+    "c": set_current_chat,
+    "m": get_messages,
     "ntfs": get_notifications
 }

@@ -1,70 +1,64 @@
 {% import 'macros.html' as macros %}
-<div class="chat-list" id="chat-list">
 
+<div class="chat-list" id="chat-list">
     <div class="control">
         <div class="button" id="add-new-chat">+</div>
     </div>
 
     <div class="search-user-window">
-
         <div class="search-and-close">
-
             <input type="search" class="search-line" id="search-users-for-new-chat" placeholder="Поиск пользователей">
             <div class="close-button" id="close-new-chat"></div>
-
         </div>
 
         <div id="search-user-result"></div>
-
     </div>
 
     <div class="chat-list-items" id="chat-list-items">
         {% for chat in current_user.chats %}
             <div class="user-item
-                    {% if recipient %}{% if recipient in chat.users and recipient.id != current_user.id %} current{% endif %}{% endif %}"
+            {% if current_recipient %}{% if current_recipient in chat.users %} current{% endif %}{% endif %}"
                  id="user-item" user_id="{{ macros.chat_recipient_id(chat, current_user) }}">
-            {# TODO: url_for #}    <a href="/profile/{{ macros.chat_recipient_id(chat, current_user) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+                <a href="{{ url_for('profile', user_id=macros.chat_recipient_id(chat, current_user)) }}">{{ macros.chat_recipient_login(chat, current_user) }}</a>
+
                 {% if chat.id in current_user.message_notifications|map(attribute='message')|map(attribute='chat')|map(attribute='id')|list %}
-                    (непрочитанно)
+                    (непрочитано)
                 {% endif %}
             </div>
         {% endfor %}
     </div>
-
 </div>
 
 <div class="chat-message-list">
-
-    {% if recipient %}
+    {% if current_chat %}
         <script type="text/javascript">
             socket.on('received_message', function (message) {
-
                 if (message.chat_id == {{ current_chat.id }}) {
                     const data = {me: {{ current_user.id }}}
-                    if (message.sender.id !== {{ recipient.id }}) {
-                        socket.emit('remove chat notification', {chat_id: message.chat_id})
+                    if (message.sender.id !== {{ current_recipient.id }}) {
+                        socket.emit('chat is read', {chat_id: message.chat_id})
                     }
                     chat_log.append(createMessage(data, message))
                     chat_log.scrollTo(0, chat_log.scrollHeight)
                 }
             });
         </script>
-        <input type="search" class="search-line" id="search-message" placeholder="Поиск сообщений">
-        <div class="chat-log" id="chat-log">
 
+        <input type="search" class="search-line" id="search-message" placeholder="Поиск сообщений">
+
+        <div class="chat-log" id="chat-log">
             {% for message in current_chat.messages[-50:] %}
                 <div class="message{% if message.user.id == current_user.id %} me{% endif %}">
-                    <a class="message-from" href="../profile/{{ message.user.id }}">{{ message.user.login }}
+                    <a class="message-from" href="{{ url_for('profile', user_id=message.user.id) }}">{{ message.user.login }}
                         <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time>
                     </a>
-
                     <div class="message-content">{{ message.content }}</div>
                 </div>
             {% endfor %}
             <script type="text/javascript">document.getElementById('chat-log').scrollTo(0, document.getElementById('chat-log').scrollHeight);</script>
         </div>
 
-        <div class="chat-input" id="chat-input" send_to="{{ recipient.id }}">
+        <div class="chat-input" id="chat-input" send_to="{{ current_recipient.id }}">
             {{ type_message_form.attach_button }}
             {{ type_message_form.input_message }}
             {{ type_message_form.send_button }}
@@ -73,5 +67,4 @@
     {% else %}
         <h3>Диалог не выбран</h3>
     {% endif %}
-
 </div>

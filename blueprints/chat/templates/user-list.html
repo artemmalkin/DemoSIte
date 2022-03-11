@@ -1,7 +1,7 @@
-{% if result %}
-    {% for user in result %}
+{% if response.items %}
+    {% for user in response.items %}
         <div class="user-item" id="user-item" user_id="{{ user.id }}">
-     {# TODO: url_for #}   <a href="/profile/{{ user.id }}">{{ user.login }}</a>
+        <a href="{{ url_for('profile', user_id=user.id) }}">{{ user.login }}</a>
         </div>
     {% endfor %}
 {% else %}

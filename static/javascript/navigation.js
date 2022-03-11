@@ -1,5 +1,11 @@
 const menu_auth = document.getElementById('menu-auth');
 
+const loading = document.createElement('img')
+loading.src = '../static/loading.gif'
+loading.alt = 'loading...'
+loading.width = 50
+
+
 menu_auth.addEventListener("click", function (event) {
 
     const target = event.target;
@@ -15,8 +21,7 @@ menu_auth.addEventListener("click", function (event) {
 
             } else {
                 ntf_menu.classList.add('active')
-                let get = Get('?ntfs')
-                document.getElementById('notification-list').innerHTML = '<img src="./static/loading.gif" alt="loading..."  width="50" />'
+                let get = Get('?ntfs', document.getElementById('notification-list'))
                 get.onload = function () {
                  document.getElementById('notification-list').innerHTML = get.responseText
                 };
@@ -31,9 +36,10 @@ menu_auth.addEventListener("click", function (event) {
     }
 });
 
-function Get(theUrl) {
+function Get(theUrl, loading_element) {
     let xml = new XMLHttpRequest();
     xml.open("GET", theUrl, true);
     xml.send(null);
+    loading_element.innerHTML = loading.outerHTML
     return xml;
 }

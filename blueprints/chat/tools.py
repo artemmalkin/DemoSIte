@@ -16,8 +16,8 @@ def create_chat(data):
                 raise SQLAlchemyError('This chat already exists.')
 
         new_chat = Chat()
-        new_chat.user_participations.append(ChatParticipation(user=sender, recipient_id=data['recipient']))
-        new_chat.user_participations.append(ChatParticipation(user=recipient, recipient_id=current_user.id))
+        new_chat.users_participation.append(ChatParticipation(user=sender, recipient_id=data['recipient']))
+        new_chat.users_participation.append(ChatParticipation(user=recipient, recipient_id=current_user.id))
 
         db.session.add(new_chat)
         db.session.commit()

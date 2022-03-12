@@ -36,7 +36,8 @@ def search_user(data):
             page = int(data.get('page'))
         except ValueError:
             pass
-        response = User.query.filter(User.login.contains(data.get('q'))).paginate(page, 10, False)
+        response = User.query.filter(User.login.contains(data.get('q')), User.login != current_user.login).paginate(
+            page, 10, False)
 
     return render_template('user-list.html', response=response)
 

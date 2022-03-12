@@ -8,5 +8,4 @@ class RegisterOrLoginForm(Form):
 
 class TypeMessageForm(Form):
     input_message = TextAreaField(render_kw={"placeholder": "Ваше сообщение"})
-    attach_button = SubmitField('Прикрепить', render_kw={"class": "button"})
     send_button = SubmitField('Отправить', render_kw={"class": "button"})

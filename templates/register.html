@@ -2,7 +2,7 @@
 {% block content %}
     <h2>Регистрация</h2>
     <div class="content-block">
-        <form method="POST" action="/register">{# TODO: url_for #}
+        <form method="POST" action="{{ url_for('register') }}">
             {% for flash_msg in get_flashed_messages() %}
             <div class="flash-msg">{{ flash_msg }}</div>
             {% endfor %}
@@ -11,7 +11,7 @@
             {{ form.password.label }}<br>
             {{ form.password }}<br><br>
             <input class="button" type="submit" value="Регистрация">
-            <a href="/login">Войти</a>{# TODO: url_for #}
+            <a href="{{ url_for('login') }}">Войти</a>
         </form>
     </div>
 {% endblock content %}

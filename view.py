@@ -10,12 +10,9 @@ from methods import handle_request
 from models import User
 
 
-@login_manager.user_loader # TODO: Это чё за хуйне?
-def load_user(user_id): # TODO: Это чё за хуйне?
-    try:# TODO: Это чё за хуйне?
-        return User.query.get(user_id)# TODO: Это чё за хуйне?
-    except Exception:# TODO: Это чё за хуйне?
-        return None# TODO: Это чё за хуйне?
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 
 @app.errorhandler(404)
@@ -63,9 +60,9 @@ def login():# TODO: функция в целом пздц
     if current_user.is_anonymous:
         form = RegisterOrLoginForm(request.form)
         if request.method == 'POST':
-            user = db.session.query(User).filter(User.login == form.login.data).first()
+            user = User.query.filter(User.login == form.login.data).first()
             if user and check_password_hash(user.password, form.password.data): # TODO: ты wtforms по рофлу используешь?
-                login_user(user, remember=False)
+                login_user(user, remember=True)
                 return redirect(url_for('index'))
             flash("Неверный логин или пароль")
             return redirect(url_for('login'))

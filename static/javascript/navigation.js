@@ -23,7 +23,7 @@ menu_auth.addEventListener("click", function (event) {
                 ntf_menu.classList.add('active')
                 let get = Get('?ntfs', document.getElementById('notification-list'))
                 get.onload = function () {
-                 document.getElementById('notification-list').innerHTML = get.responseText
+                    document.getElementById('notification-list').innerHTML = get.responseText
                 };
             }
 
@@ -40,6 +40,11 @@ function Get(theUrl, loading_element) {
     let xml = new XMLHttpRequest();
     xml.open("GET", theUrl, true);
     xml.send(null);
-    loading_element.innerHTML = loading.outerHTML
+    setTimeout(function () {
+        if (xml.status === 0) {
+            loading_element.innerHTML = loading.outerHTML
+        }
+    }, 200)
+
     return xml;
 }

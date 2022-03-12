@@ -426,6 +426,7 @@ textarea {
     border: 2px solid #ebebeb;
     resize: none;
     width: 100%;
+    margin: .5em;
 }
 
 .chat-input {

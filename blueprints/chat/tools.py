@@ -16,8 +16,8 @@ def create_chat(data):
                 raise SQLAlchemyError('This chat already exists.')
 
         new_chat = Chat()
-        new_chat.users_participation.append(ChatParticipation(user=sender, recipient_id=data['recipient']))
-        new_chat.users_participation.append(ChatParticipation(user=recipient, recipient_id=current_user.id))
+        new_chat.users_participation.append(ChatParticipation(sender=sender, recipient_id=data['recipient']))
+        new_chat.users_participation.append(ChatParticipation(sender=recipient, recipient_id=current_user.id))
 
         db.session.add(new_chat)
         db.session.commit()
@@ -32,8 +32,7 @@ def create_chat(data):
 def add_message(chat, content):
     message = None
     try:
-        sender = User.query.filter_by(id=current_user.id).one()
-        message = Message(user=sender, content=content)
+        message = Message(sender=current_user, content=content)
         chat.messages.append(message)
         db.session.commit()
     except SQLAlchemyError as e:
@@ -59,17 +58,13 @@ def new_chat_notification(recipient, message):
 
 
 def set_chat_read(chat_id):
-    success = False
     try:
         MessageNotification.query.filter_by(chat_id=chat_id, recipient_id=current_user.id).delete()
         db.session.commit()
-        success = True
     except SQLAlchemyError as e:
         db.session.rollback()
         error = str(e)
         print(error)
-
-    return success
 
 
 def new_notification(user, title, content):

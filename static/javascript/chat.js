@@ -94,14 +94,6 @@ function searchUsers(event = KeyboardEvent) {
 
 }
 
-function Get(theUrl, loading_element) {
-    let xml = new XMLHttpRequest();
-    xml.open("GET", theUrl, true);
-    xml.send(null);
-    loading_element.innerHTML = loading.outerHTML
-    return xml;
-}
-
 function createMessage(data, message) {
     let message_item = document.createElement('div');
     let message_from = document.createElement('a');

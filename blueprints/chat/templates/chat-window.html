@@ -35,7 +35,7 @@
             socket.on('received_message', function (message) {
                 if (message.chat_id == {{ current_chat.id }}) {
                     const data = {me: {{ current_user.id }}}
-                    if (message.sender.id !== {{ current_recipient.id }}) {
+                    if (message.sender.id === {{ current_recipient.id }}) {
                         socket.emit('chat is read', {chat_id: message.chat_id})
                     }
                     chat_log.append(createMessage(data, message))
@@ -48,8 +48,8 @@
 
         <div class="chat-log" id="chat-log">
             {% for message in current_chat.messages[-50:] %}
-                <div class="message{% if message.user.id == current_user.id %} me{% endif %}">
-                    <a class="message-from" href="{{ url_for('profile', user_id=message.user.id) }}">{{ message.user.login }}
+                <div class="message{% if message.sender.id == current_user.id %} me{% endif %}">
+                    <a class="message-from" href="{{ url_for('profile', user_id=message.sender.id) }}">{{ message.sender.login }}
                         <time datetime="{{ message.date.strftime("%Y:%M:%D:%H:%M") }}">{{ message.date.strftime("%H:%M") }}</time>
                     </a>
                     <div class="message-content">{{ message.content }}</div>
@@ -59,7 +59,6 @@
         </div>
 
         <div class="chat-input" id="chat-input" send_to="{{ current_recipient.id }}">
-            {{ type_message_form.attach_button }}
             {{ type_message_form.input_message }}
             {{ type_message_form.send_button }}
         </div>

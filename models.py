@@ -106,7 +106,7 @@ class Message(db.Model, UserMixin):
     def serialize(self):
         return {
             'id': self.id,
-            'sender': self.user.serialize,
+            'sender': self.sender.serialize,
             'content': self.content,
             'is_read': self.is_read,
             'date': [self.date.strftime("%Y:%M:%D:%H:%M"), self.date.strftime("%H:%M")]

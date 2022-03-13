@@ -71,8 +71,8 @@ header {
     max-height: var(--vh);
     padding: 1em;
     background-color: white;
-    -webkit-box-shadow: 0px 9px 28px -1px rgba(0,0,0,0.3);
-    box-shadow: 0px 9px 28px -1px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0 9px 28px -1px rgba(0,0,0,0.3);
+    box-shadow: 0 9px 28px -1px rgba(0,0,0,0.3);
     border-radius: 0.5em;
 }
 

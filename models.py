@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_login import UserMixin
 
-from app import db
+from app import db, login_manager
 
 
 class ChatParticipation(db.Model, UserMixin):
@@ -37,6 +37,11 @@ class User(db.Model, UserMixin):
             'id': self.id,
             'login': self.login
         }
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 
 class Notification(db.Model, UserMixin):

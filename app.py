@@ -17,6 +17,7 @@ migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 
+
 from blueprints.chat import chat
 
 app.register_blueprint(chat)

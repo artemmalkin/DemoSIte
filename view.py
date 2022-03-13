@@ -1,18 +1,10 @@
-import flask_login
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_user, login_required, current_user
-from sqlalchemy.exc import SQLAlchemyError
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_required, current_user, logout_user
 
-from app import login_manager, app, db
+from app import app
 from forms import RegisterOrLoginForm
 from methods import handle_request
 from models import User
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
 
 
 @app.errorhandler(404)
@@ -35,46 +27,39 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     context = dict()
+
     if current_user.is_anonymous:
         form = RegisterOrLoginForm(request.form)
-        if request.method == 'POST':
-            try:
-                db.session.add(User(login=request.form.get('login'),
-                                    password=generate_password_hash(request.form.get('password'))))
-                db.session.commit()
-                flash("Вы успешно зарегистрировались!")
-            except SQLAlchemyError as e: # TODO: ты wtforms по рофлу используешь?
-                db.session.rollback() # TODO: ты wtforms по рофлу используешь?
-                error = str(e.__dict__['orig']) # TODO: ты wtforms по рофлу используешь?
-                print(error) # TODO: ты wtforms по рофлу используешь?
-                if "already exists" in error: # TODO: ты wtforms по рофлу используешь?
-                    flash(f"Такой логин уже зарегистрирован, повторите попытку.") # TODO: ты wtforms по рофлу используешь?
-        context.update(form=form, users=User.query.all())
-        return render_template('register.html', **context)
-    return redirect(url_for('index'))
+
+        if request.method == 'POST' and form.validate_on_register():
+            return redirect(url_for('index'))
+        else:
+            context.update(form=form, users=User.query.all())
+            return render_template('register.html', **context)
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():# TODO: функция в целом пздц
+def login():
     context = dict()
+
     if current_user.is_anonymous:
         form = RegisterOrLoginForm(request.form)
-        if request.method == 'POST':
-            user = User.query.filter(User.login == form.login.data).first()
-            if user and check_password_hash(user.password, form.password.data): # TODO: ты wtforms по рофлу используешь?
-                login_user(user, remember=True)
-                return redirect(url_for('index'))
-            flash("Неверный логин или пароль")
-            return redirect(url_for('login'))
-        context.update(form=form, users=User.query.all())
-        return render_template('login.html', **context)
-    return redirect(url_for('index'))
+
+        if request.method == 'POST' and form.validate_on_login():
+            return redirect(url_for('index'))
+        else:
+            context.update(form=form, users=User.query.all())
+            return render_template('login.html', **context)
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/logout')
 @login_required
 def logout():
-    flask_login.logout_user()
+    logout_user()
     flash('Вы вышли из аккаунта.')
     return redirect(url_for('login'))
 

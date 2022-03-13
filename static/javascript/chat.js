@@ -50,6 +50,16 @@ chat_window.addEventListener("click", function (event) {
 
             break
 
+        case "page":
+
+            const value = document.getElementById(`search-users-for-new-chat`).value;
+            let get = Get(`?q=${value}&page=${target.getAttribute('page')}`, document.getElementById(`search-user-result`))
+            get.onload = function () {
+                document.getElementById(`search-user-result`).innerHTML = get.responseText
+            };
+
+            break
+
         default:
 
             break

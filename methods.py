@@ -27,7 +27,6 @@ def handle_request(template):
 
 
 def search_user(data):
-    # TODO загрузка по номеру страницы
     response = None
     page = 1
 
@@ -37,9 +36,9 @@ def search_user(data):
         except ValueError:
             pass
         response = User.query.filter(User.login.contains(data.get('q')), User.login != current_user.login).paginate(
-            page, 10, False)
+            page, 5, False)
 
-    return render_template('user-list.html', response=response)
+    return render_template('user-list.html', response=response, page=page)
 
 
 def set_current_chat(data):
@@ -88,7 +87,6 @@ def get_messages(data):
 
 
 def get_notifications(data):
-    # TODO загрузка по номеру страницы
     return render_template('notification-list.html')
 
 

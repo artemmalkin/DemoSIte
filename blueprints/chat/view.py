@@ -13,7 +13,6 @@ from models import User, ChatParticipation, Message
 @chat.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    print(session)
     context = dict()
     context.update(users=User.query.all(),
                    type_message_form=TypeMessageForm(request.form))

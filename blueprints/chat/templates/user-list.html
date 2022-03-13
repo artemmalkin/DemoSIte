@@ -1,4 +1,19 @@
 {% if response.items %}
+    <div class="pagination">
+        <div class="prev-page">
+            {% if response.has_prev %}
+                <div class="button" id="page" page="{{ response.prev_num }}">&lt;&lt;</div>
+            {% endif %}
+        </div>
+        <div class="page-num">
+            {{ page }}
+        </div>
+        <div class="next-page">
+            {% if response.has_next %}
+                 <div class="button" id="page" page="{{ response.next_num }}">&gt;&gt;</div>
+            {% endif %}
+        </div>
+    </div>
     {% for user in response.items %}
         <div class="user-item" id="user-item" user_id="{{ user.id }}">
         <a href="{{ url_for('profile', user_id=user.id) }}">{{ user.login }}</a>

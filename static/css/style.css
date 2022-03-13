@@ -114,6 +114,36 @@ header {
 
 /* FIELDS */
 
+/* pagination */
+
+.pagination {
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.prev-page {
+    position: absolute;
+    width: 5em;
+    left: 0;
+}
+
+.page-num {
+    padding: .2em 0;
+    margin: .2em auto;
+    border-radius: .5em;
+    width: 5em;
+    user-select: none;
+    background-color: rgba(202, 255, 127, 0.8);
+}
+
+.next-page {
+    top: 0;
+    position: absolute;
+    width: 5em;
+    right: 0;
+}
+
 /* button */
 
 .button {
@@ -121,12 +151,13 @@ header {
     background-color: #caff7f;
     padding: 0 .4em 0 .4em;
     margin: .2em;
-    border-radius: 0.5em;
+    border-radius: .5em;
     font-size: 1.2em;
     cursor: pointer;
     outline: none;
     border: 0 none;
     justify-content: center;
+    user-select: none;
 }
 
 .button:hover {

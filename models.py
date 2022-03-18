@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 from app import db, login_manager
 
@@ -75,7 +75,7 @@ class MessageNotification(db.Model, UserMixin):
     recipient = db.relationship('User', backref='message_notifications')
 
     def __repr__(self):
-        return f"id: {self.id} recipient: {self.recipient} message: {self.message}"
+        return f"chat_id: {self.chat_id} notification_id: {self.id}"
 
 
 class Chat(db.Model, UserMixin):
@@ -87,6 +87,17 @@ class Chat(db.Model, UserMixin):
 
     def __repr__(self):
         return f"{self.id}"
+
+    @property
+    def serialize(self):
+        data = {'recipient': recipient for recipient in self.users if recipient != current_user}
+        notifications = MessageNotification.query.filter_by(chat_id=self.id, recipient_id=current_user.id).count()
+
+        return {
+            'id': self.id,
+            'recipient': {'id': data['recipient'].id, 'login': data['recipient'].login},
+            'notifications': notifications
+        }
 
 
 class Message(db.Model, UserMixin):

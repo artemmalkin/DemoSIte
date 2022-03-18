@@ -1,20 +1,20 @@
-{% if response.items %}
+{% if response['users'].items %}
     <div class="pagination">
         <div class="prev-page">
-            {% if response.has_prev %}
-                <div class="button" id="page" page="{{ response.prev_num }}">&lt;&lt;</div>
+            {% if response['users'].has_prev %}
+                <div class="button" id="page" page="{{ response['users'].prev_num }}">&lt;&lt;</div>
             {% endif %}
         </div>
         <div class="page-num">
-            {{ page }}
+            {{ response['page'] }}
         </div>
         <div class="next-page">
-            {% if response.has_next %}
-                 <div class="button" id="page" page="{{ response.next_num }}">&gt;&gt;</div>
+            {% if response['users'].has_next %}
+                 <div class="button" id="page" page="{{ response['users'].next_num }}">&gt;&gt;</div>
             {% endif %}
         </div>
     </div>
-    {% for user in response.items %}
+    {% for user in response['users'].items %}
         <div class="user-item" id="user-item" user_id="{{ user.id }}">
         <a href="{{ url_for('profile', user_id=user.id) }}">{{ user.login }}</a>
         </div>

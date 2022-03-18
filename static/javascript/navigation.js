@@ -1,3 +1,5 @@
+const title = document.title
+
 const menu_auth = document.getElementById('menu-auth');
 
 const loading = document.createElement('img')
@@ -5,6 +7,9 @@ loading.src = '../static/loading.gif'
 loading.alt = 'loading...'
 loading.width = 50
 
+let url_for_icons
+
+updateNotifications()
 
 menu_auth.addEventListener("click", function (event) {
 
@@ -35,6 +40,24 @@ menu_auth.addEventListener("click", function (event) {
 
     }
 });
+
+function updateNotifications() {
+    let getNtfsCount = Get('?ntfs=count')
+    getNtfsCount.onload = function () {
+        let response = JSON.parse(getNtfsCount.response)
+        let count = response.count_of_notifications
+        if (count === 0) {
+            document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification.svg`)
+        } else {
+            document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification-active.svg`)
+        }
+        if (count <= 99) {
+            document.getElementById('notification-count').innerText = count != 0 ? count : ''
+        } else {
+            document.getElementById('notification-count').innerText = '99+'
+        }
+    }
+}
 
 function Get(theUrl, loading_element) {
     let xml = new XMLHttpRequest();

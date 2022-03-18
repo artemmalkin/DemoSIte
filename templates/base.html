@@ -27,36 +27,46 @@
             </script>
             <script type="text/javascript">
                 let socket = io();
+                const me = {{ current_user.id }};
+                {% if chat_id %}
+                    let current_chat_id = {{ chat_id }};
+                {% else %}
+                    let current_chat_id;
+                {% endif %}
 
-                socket.on('connect', function () {
-                    socket.emit('join');
-                });
+                    socket.on('connect', function () {
+                        socket.emit('join');
+                    });
 
                 socket.on('received_message', function (data) {
-                    if (data.sender.id !== {{ current_user.id }}{% if current_chat %} & data.chat_id !== {{ current_chat.id }}{% endif %}) {
-                        document.getElementById('notification-icon').setAttribute('src', '{{ url_for('static', filename='icons/notification-active.svg') }}')
-                        let count = document.getElementById('notification-count')
-                        const count_int = (count.innerText === '') ? 0 : (count.innerText === '99+') ? 99 : parseInt(count.innerText);
-                        count.innerText = (count_int === 99) ? '99+' : count_int + 1;
-                    }
-                })
+                    if (data.sender.id !== me & data.chat_id !== current_chat_id) {
+
+                        updateNotifications()
+
+                        let show = true
+                        let interval_id = setInterval(function () {
+                            if (show) {
+                                document.title = 'Новое уведомление!'
+                                show = false
+                            } else {
+                                document.title = title
+                                show = true
+                            }
+                            }, 500)
+                        setTimeout(function () {clearInterval(interval_id)}, 5500)
+                    } else {
+                        socket.emit('chat is read', {chat_id: current_chat_id})
+                    }})
             </script>
 
             <script src={{ url_for('static', filename='javascript/navigation.js') }}></script>
 
             <div class="button-ico" id="notification">
 
-                {% set count_notifications = current_user.message_notifications|count + current_user.notifications|count %}
 
-                <img id="notification-icon"
-                     src="{{ url_for('static', filename='icons') }}/notification{% if count_notifications %}-active{% endif %}.svg">
-                <div class="notification-count" id="notification-count">
-                    {% if count_notifications <= 99 %}
-                        {{ count_notifications }}
-                    {% else %}
-                        99+
-                    {% endif %}
-                </div>
+                <script type="text/javascript">url_for_icons = "{{ url_for('static', filename='icons') }}"</script>
+                <img id="notification-icon" src="">
+                <div class="notification-count" id="notification-count"></div>
             </div>
 
             <div class="notification-menu" id="notification-menu">
@@ -66,7 +76,8 @@
                 <div class="notification-list" id="notification-list"></div>
             </div>
 
-            <a class="avatar" href={{ url_for('profile', user_id=current_user.id) }}>{{ current_user.login.upper()[0] }}</a>
+            <a class="avatar"
+               href={{ url_for('profile', user_id=current_user.id) }}>{{ current_user.login.upper()[0] }}</a>
             <div class="button-header"><a href={{ url_for('logout') }}>Выйти</a></div>
 
         {% else %}

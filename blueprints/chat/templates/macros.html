@@ -1,7 +1,0 @@
-{% macro chat_recipient_id(chat, current_user) -%}
-    {% for user in chat.users %}{% if user.id != current_user.id %}{{ user.id }}{% endif %}{% endfor %}
-{%- endmacro %}
-
-{% macro chat_recipient_login(chat, current_user) -%}
-    {% for user in chat.users %}{% if user.id != current_user.id %}{{ user.login }}{% endif %}{% endfor %}
-{%- endmacro %}

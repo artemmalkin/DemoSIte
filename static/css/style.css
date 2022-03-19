@@ -71,8 +71,8 @@ header {
     max-height: var(--vh);
     padding: 1em;
     background-color: white;
-    -webkit-box-shadow: 0 9px 28px -1px rgba(0,0,0,0.3);
-    box-shadow: 0 9px 28px -1px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0 9px 28px -1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 9px 28px -1px rgba(0, 0, 0, 0.3);
     border-radius: 0.5em;
 }
 
@@ -281,6 +281,11 @@ header {
     filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.05));
 }
 
+.loading {
+    display: flex;
+    align-self: center;
+}
+
 /* flash messages */
 
 .flash-msg {
@@ -422,7 +427,28 @@ header {
     filter: drop-shadow(2px 3px 5px #dcdcdc);
 }
 
+#search-message {
+    width: 100%;
+}
+
+#search-message-result {
+    overflow: auto;
+    max-height: 25em;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: .5em;
+}
+
+#close-search-message {
+    display: none;
+}
+
 /* chat actions */
+
+.act-search-message #close-search-message {
+    display: block;
+}
 
 .chat-active .chat-message-block {
     display: flex;
@@ -449,10 +475,24 @@ header {
     border-bottom: 2px solid #ebebeb;
 }
 
-.act-new-chat .search-and-close {
+.act-new-chat .input-line {
     display: flex;
     align-items: center;
     padding: 1em;
+}
+
+.act-search-message .input-line {
+    display: flex;
+    align-items: center;
+}
+
+.act-search-message #search-message-result {
+    display: flex;
+    padding: 0 1em;
+}
+
+.act-search-message #search-message-result .message {
+    width: 40%;
 }
 
 /* chat fields */

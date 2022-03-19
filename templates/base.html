@@ -40,7 +40,6 @@
 
                 socket.on('received_message', function (data) {
                     if (data.sender.id !== me & data.chat_id !== current_chat_id) {
-
                         updateNotifications()
 
                         let show = true
@@ -51,8 +50,7 @@
                             } else {
                                 document.title = title
                                 show = true
-                            }
-                            }, 500)
+                            }}, 500)
                         setTimeout(function () {clearInterval(interval_id)}, 5500)
                     } else {
                         socket.emit('chat is read', {chat_id: current_chat_id})
@@ -62,10 +60,8 @@
             <script src={{ url_for('static', filename='javascript/navigation.js') }}></script>
 
             <div class="button-ico" id="notification">
-
-
                 <script type="text/javascript">url_for_icons = "{{ url_for('static', filename='icons') }}"</script>
-                <img id="notification-icon" src="">
+                <img id="notification-icon" src="{{ url_for('static', filename='icons/notification.svg') }}">
                 <div class="notification-count" id="notification-count"></div>
             </div>
 

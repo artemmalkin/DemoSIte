@@ -32,6 +32,12 @@ chat_window.addEventListener("click", function (event) {
 
             break
 
+        case "close-search-message":
+
+            chat_window.classList.remove("act-search-message");
+
+            break
+
         case "user-item":
             document.title = title
 
@@ -57,7 +63,6 @@ chat_window.addEventListener("click", function (event) {
 
                 chat_log.innerHTML = ''
                 getMessages(current_page, r_id)
-                chat_log.scrollTo(0, chat_log.scrollHeight)
 
                 getDialogs()
                 updateNotifications()
@@ -100,6 +105,8 @@ chat_log.addEventListener('scroll', function (event) {
     }
 })
 
+document.getElementById(`search-message-line`).addEventListener("keyup", searchMessage);
+
 
 function searchUsers(event = KeyboardEvent) {
     event.preventDefault();
@@ -110,7 +117,28 @@ function searchUsers(event = KeyboardEvent) {
             document.getElementById(`search-user-result`).innerHTML = getSearchUser.responseText
         };
     }
+}
 
+function searchMessage(event = KeyboardEvent) {
+    event.preventDefault();
+    if (event.code === "Enter") {
+        const value = document.getElementById(`search-message-line`).value;
+        const getSearchMessage = Get(`?search_message=${value}&user=${r_id}`, document.getElementById('search-message-result'))
+
+        chat_window.classList.add('act-search-message')
+
+        getSearchMessage.onload = function () {
+            let response = JSON.parse(getSearchMessage.response)
+
+            document.getElementById('search-message-result').innerHTML = ''
+
+            for (let message in response['result']) {
+                document.getElementById('search-message-result').appendChild(createMessage(response['result'][message]))
+            } if (document.getElementById('search-message-result').innerHTML === '') {
+                document.getElementById('search-message-result').innerHTML = 'Ничего не найдено.'
+            }
+        };
+    }
 }
 
 

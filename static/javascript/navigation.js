@@ -6,6 +6,7 @@ const loading = document.createElement('img')
 loading.src = '../static/loading.gif'
 loading.alt = 'loading...'
 loading.width = 50
+loading.classList.add('loading')
 
 let url_for_icons
 

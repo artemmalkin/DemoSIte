@@ -1,5 +1,6 @@
 from flask import render_template, request
 from flask_login import current_user
+from sqlalchemy import func
 
 from blueprints.chat.tools import get_chat, set_chat_read
 from forms import TypeMessageForm
@@ -21,7 +22,7 @@ def handle_request(template):
     """
     for key in request.args.keys():
         if key in methods:
-            return methods[key](request.args)  # return response
+            return methods[key](request.args)
     return template
 
 
@@ -33,7 +34,7 @@ def search_user(data):
         except ValueError:
             pass
 
-        response['users'] = User.query.filter(User.login.contains(data.get('search_user')),
+        response['users'] = User.query.filter(User.login.ilike('%' + data.get('search_user') + '%'),
                                               User.login != current_user.login). \
             order_by(User.id.desc()).paginate(response['page'], 5, False)
 
@@ -91,6 +92,22 @@ def get_messages(data):
     return response
 
 
+def search_message(data):
+    response = {'result': []}
+
+    if data.get('search_message'):
+        chat_id = ChatParticipation.query.filter_by(sender_id=current_user.id,
+                                                    recipient_id=data.get('user')).one_or_none().chat.id
+
+        messages = Message.query.filter(Message.chat_id == chat_id,
+                                        Message.content.ilike('%' + data.get('search_message') + '%')).all()
+
+        for message in messages:
+            response['result'].append(message.serialize)
+
+    return response
+
+
 def get_chats(data):
     chat_list = [chat.serialize for chat in current_user.chats]
     response = {'chats': chat_list}
@@ -107,6 +124,7 @@ def get_notifications(data):
 methods = {
     "search_user": search_user,
     "user": get_chat_id,
+    "search_message": search_message,
     "messages": get_messages,
     "dialogs": get_chats,
     "ntfs": get_notifications

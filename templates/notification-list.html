@@ -1,21 +1,14 @@
-{% set notifications = [current_user.message_notifications + current_user.notifications] %}
+{% set sum = msg_notifications + current_user.notifications|count %}
 
-{% set count_msg = notifications[0]|count %}
-{% set count_ntf = notifications[1]|count %}
-{% set count_sum = count_msg + count_ntf %}
-
-{% if count_sum %}
-
-{% if notifications[0] %}
+{% if sum %}
+{% if msg_notifications %}
     <div class="ntf-item">
-        <div class="ntf-title">Новое сообщение!
-            <div class="ntf-date">{% set last_ntf = notifications[0]|last %}{{ last_ntf.message.date.strftime("%H:%M") }}</div>
-        </div>
-        <div class="ntf-content">Непрочитанных сообщений в чате: {{ count_msg }}</div>
+        <div class="ntf-title">Новое сообщение!</div>
+        <div class="ntf-content">Непрочитанных сообщений в чате: {{ msg_notifications }}</div>
     </div>
 {% endif %}
 
-{% for notification in notifications[1]|reverse %}
+{% for notification in current_user.notifications|reverse %}
     <div class="ntf-item">
         <div class="ntf-title">{{ notification.title }}
             <div class="ntf-date">{{ notification.date.strftime("%H:%M") }}</div>

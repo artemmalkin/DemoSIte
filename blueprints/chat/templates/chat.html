@@ -3,7 +3,7 @@
 {% block content %}
     <h2>Чат</h2>
 
-    <div class="chat-window {% if chat_id %}chat-active{% endif %}" id="chat-window">
+    <div class="chat-window" id="chat-window">
         {% include 'chat-window.html' %}
     </div>
     <script type="text/javascript" src={{ url_for('static', filename='javascript/chat.js') }}></script>

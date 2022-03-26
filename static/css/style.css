@@ -7,6 +7,7 @@ body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background-color: #ebebeb;
+    overflow-wrap: break-word;
 }
 
 /* HEADER */
@@ -253,6 +254,7 @@ header {
     margin-right: auto;
     width: 50%;
     text-align: center;
+    overflow: hidden;
 }
 
 .right-content {
@@ -262,6 +264,8 @@ header {
     height: 100%;
     right: 0;
     top: 0;
+    overflow: hidden;
+
 }
 
 .left-content {
@@ -271,6 +275,7 @@ header {
     height: 100%;
     left: 0;
     top: 0;
+    overflow: hidden;
 }
 
 .content-block {
@@ -360,7 +365,9 @@ header {
 }
 
 .message time {
-    font-size: small;
+    font-size: .7em;
+    margin: 0 0 0 auto;
+    color: #696969;
 }
 
 .me {

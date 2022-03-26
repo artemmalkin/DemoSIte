@@ -1,24 +1,21 @@
 import re
 
 from flask import render_template, request, session
-from flask_login import login_required, current_user
+from flask_login import login_required
 from flask_socketio import emit, join_room, leave_room
 
 from app import socketio
 from blueprints.chat import chat
-from blueprints.chat.tools import add_message, new_chat_notification, set_chat_read
+from blueprints.chat.tools import add_message, set_chat_read
 from forms import TypeMessageForm
-from methods import handle_request
-from models import User, ChatParticipation, Message
 
 
-@chat.route('/', methods=['GET', 'POST'])
+@chat.route('/')
 @login_required
 def index():
     context = dict()
-    context.update(users=User.query.all(),
-                   type_message_form=TypeMessageForm(request.form))
-    return handle_request(render_template('chat.html', **context))
+    context.update(type_message_form=TypeMessageForm(request.form))
+    return render_template('chat.html', **context)
 
 
 @socketio.on('join')
@@ -34,20 +31,15 @@ def on_leave(data):
 
 @socketio.on('send_message')
 def handle_message(data):
-    if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0:
-        current_chat = ChatParticipation.query.filter_by(recipient_id=data['recipient'],
-                                                         sender_id=current_user.id).one().chat
-
-        message = add_message(chat=current_chat, content=data['content'])
-        message['chat_id'] = current_chat.id
+    current_chat_id = session.get('current_chat_id')
+    if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0 and current_chat_id is not None:
+        message = add_message(chat_id=session.get('current_chat_id'), recipient_id=data['recipient'],
+                              content=data['content'])
+        message['chat_id'] = current_chat_id
 
         # Send the message to both users
         emit('received_message', message, room=session['_user_id'])
         emit('received_message', message, room=str(data['recipient']))
-
-        # Send the notification to recipient
-        new_chat_notification(recipient=User.query.filter_by(id=data['recipient']).one(),
-                              message=Message.query.filter_by(id=message['id']).one())
 
 
 @socketio.on('chat is read')

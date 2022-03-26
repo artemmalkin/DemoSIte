@@ -59,16 +59,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id', 'user_id')
     )
-    op.create_table('message_notifications',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('chat_id', sa.Integer(), nullable=True),
-    sa.Column('message_id', sa.Integer(), nullable=False),
-    sa.Column('recipient_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ),
-    sa.ForeignKeyConstraint(['recipient_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id', 'message_id', 'recipient_id'),
-    sa.UniqueConstraint('message_id')
-    )
     # ### end Alembic commands ###
 
 

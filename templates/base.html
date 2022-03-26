@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }} type="text/css"/>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/style.css') }}/>
     <title>{{ title }}</title>
+
+    <script src={{ url_for('static', filename='javascript/config.js') }}></script>
+    <script src={{ url_for('static', filename='javascript/chat_config.js') }}></script>
+    <script type="text/javascript">url_for_icons = "{{ url_for('static', filename='icons') }}"</script>
 </head>
 
 <body>
@@ -25,21 +29,17 @@
                     integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
                     crossorigin="anonymous">
             </script>
+            <script src={{ url_for('static', filename='javascript/navigation.js') }}></script>
             <script type="text/javascript">
                 let socket = io();
                 const me = {{ current_user.id }};
-                {% if chat_id %}
-                    let current_chat_id = {{ chat_id }};
-                {% else %}
-                    let current_chat_id;
-                {% endif %}
 
-                    socket.on('connect', function () {
-                        socket.emit('join');
-                    });
+                socket.on('connect', function () {
+                    socket.emit('join');
+                });
 
                 socket.on('received_message', function (data) {
-                    if (data.sender.id !== me & data.chat_id !== current_chat_id) {
+                    if (data.sender.id !== me && data.chat_id !== current_chat_id) {
                         updateNotifications()
 
                         let show = true
@@ -50,24 +50,24 @@
                             } else {
                                 document.title = title
                                 show = true
-                            }}, 500)
-                        setTimeout(function () {clearInterval(interval_id)}, 5500)
+                            }
+                        }, 500)
+                        setTimeout(function () {
+                            clearInterval(interval_id)
+                        }, 5500)
                     } else {
                         socket.emit('chat is read', {chat_id: current_chat_id})
-                    }})
+                    }
+                })
             </script>
-
-            <script src={{ url_for('static', filename='javascript/navigation.js') }}></script>
-
             <div class="button-ico" id="notification">
-                <script type="text/javascript">url_for_icons = "{{ url_for('static', filename='icons') }}"</script>
-                <img id="notification-icon" src="{{ url_for('static', filename='icons/notification.svg') }}">
+                <img alt="notification icon" id="notification-icon" src="{{ url_for('static', filename='icons/notification.svg') }}">
                 <div class="notification-count" id="notification-count"></div>
             </div>
 
             <div class="notification-menu" id="notification-menu">
                 <svg id="ntf-mn-arrow" height="1em" width="1em">
-                    <rect x="0" y="0" width="30" height="30" fill="white"/>
+                    <rect x="0" y="0" width="30" height="30" fill="white"></rect>
                 </svg>
                 <div class="notification-list" id="notification-list"></div>
             </div>
@@ -95,12 +95,6 @@
 
 <div class="right-content">
     {% block right_content %}
-        <div class="content-block">
-            <h3>Пользователи</h3>
-            {% for user in users %}
-                <p><a href="{{ url_for('profile', user_id=user.id) }}">{{ user.login }}</a></p>
-            {% endfor %}
-        </div>
     {% endblock right_content %}
 </div>
 </body>

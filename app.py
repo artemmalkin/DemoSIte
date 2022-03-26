@@ -6,20 +6,24 @@ from flask_socketio import SocketIO
 
 from config import Configuration
 
+# App & Socketio initialisation
 app = Flask(__name__, static_folder='static')
-
 app.config.from_object(Configuration)
-
 socketio = SocketIO(app)
 
+# Database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Current_user authenticating
 login_manager = LoginManager(app)
 
-
+# Blueprints initialisation
+from blueprints.api import api
 from blueprints.chat import chat
 
 app.register_blueprint(chat)
+app.register_blueprint(api)
 
+# Routing
 import view

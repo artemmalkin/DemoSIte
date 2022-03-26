@@ -61,23 +61,6 @@ class Notification(db.Model, UserMixin):
         return f"id: {self.id} title: {self.title}"
 
 
-class MessageNotification(db.Model, UserMixin):
-    __tablename__ = 'message_notifications'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    chat_id = db.Column(db.Integer)
-
-    message_id = db.Column(db.Integer, db.ForeignKey('messages.id'), primary_key=True, unique=True)
-    message = db.relationship('Message')
-
-    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    recipient = db.relationship('User', backref='message_notifications')
-
-    def __repr__(self):
-        return f"chat_id: {self.chat_id} notification_id: {self.id}"
-
-
 class Chat(db.Model, UserMixin):
     __tablename__ = 'chats'
 
@@ -91,7 +74,8 @@ class Chat(db.Model, UserMixin):
     @property
     def serialize(self):
         data = {'recipient': recipient for recipient in self.users if recipient != current_user}
-        notifications = MessageNotification.query.filter_by(chat_id=self.id, recipient_id=current_user.id).count()
+        notifications = Message.query.filter(Message.chat_id == self.id, Message.sender_id != current_user.id,
+                                             Message.is_read == False).count()
 
         return {
             'id': self.id,
@@ -110,6 +94,8 @@ class Message(db.Model, UserMixin):
 
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     sender = db.relationship('User', backref='messages')
+
+    recipient_id = db.Column(db.Integer, nullable=False)
 
     content = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)

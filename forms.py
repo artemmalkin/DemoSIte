@@ -1,7 +1,7 @@
 from flask import flash
 from flask_login import login_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import Form, StringField, PasswordField, validators, TextAreaField, SubmitField, ValidationError
+from wtforms import Form, StringField, PasswordField, validators, TextAreaField, SubmitField
 
 from app import db
 from models import User

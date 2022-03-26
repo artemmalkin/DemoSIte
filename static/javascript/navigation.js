@@ -1,14 +1,10 @@
-const title = document.title
-
 const menu_auth = document.getElementById('menu-auth');
 
-const loading = document.createElement('img')
-loading.src = '../static/loading.gif'
-loading.alt = 'loading...'
-loading.width = 50
-loading.classList.add('loading')
-
-let url_for_icons
+const getChat = Get('users.chat_id', `user_id=${urlParams.get('user_id')}`)
+getChat.onload = function () {
+    const response = JSON.parse(getChat.response)
+    current_chat_id = response['users.chat_id']['chat_id']
+}
 
 updateNotifications()
 
@@ -24,12 +20,12 @@ menu_auth.addEventListener("click", function (event) {
 
             if (ntf_menu.classList.contains('active')) {
                 ntf_menu.classList.remove('active')
-
             } else {
                 ntf_menu.classList.add('active')
-                let get = Get('?ntfs', document.getElementById('notification-list'))
+                let get = Get('notifications.get', '', document.getElementById('notification-list'))
                 get.onload = function () {
-                    document.getElementById('notification-list').innerHTML = get.responseText
+                    const response = JSON.parse(get.response)
+                    document.getElementById('notification-list').innerHTML = response['notifications.get']
                 };
             }
 
@@ -43,30 +39,39 @@ menu_auth.addEventListener("click", function (event) {
 });
 
 function updateNotifications() {
-    let getNtfsCount = Get('?ntfs=count')
+    let getNtfsCount = Get('notifications.count', '')
     getNtfsCount.onload = function () {
-        let response = JSON.parse(getNtfsCount.response)
-        let count = response.count_of_notifications
+        const response = JSON.parse(getNtfsCount.response)
+        const count = response['notifications.count']
         if (count === 0) {
             document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification.svg`)
         } else {
             document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification-active.svg`)
         }
         if (count <= 99) {
-            document.getElementById('notification-count').innerText = count != 0 ? count : ''
+            document.getElementById('notification-count').innerText = count !== 0 ? count : ''
         } else {
             document.getElementById('notification-count').innerText = '99+'
         }
     }
 }
 
-function Get(theUrl, loading_element) {
+
+/**
+ * Get the XmlHttpRequest.
+ *
+ * @param {string} methodName Name of the method like 'messages.search'.
+ * @param {string} params Parameters for the method like 'user=1&content=hello'.
+ * @param {HTMLElement} loadingElement HtmlElement which will be showing a loading gif inside himself while response is load.
+ * @return {XMLHttpRequest} XMLHttpRequest.
+ */
+function Get(methodName, params = '', loadingElement = undefined) {
     let xml = new XMLHttpRequest();
-    xml.open("GET", theUrl, true);
+    xml.open("GET", `/api/${methodName}?${params}`, true);
     xml.send(null);
     setTimeout(function () {
         if (xml.status === 0) {
-            loading_element.innerHTML = loading.outerHTML
+            loadingElement.innerHTML = loading.outerHTML
         }
     }, 200)
 

@@ -39,20 +39,17 @@ class Messages:
         user_id = self.args.get('user_id', type=int)
         content = self.args.get('content')
 
-        response = []
         if content:
             prt = ChatParticipation.query.filter_by(sender_id=current_user.id,
                                                     recipient_id=user_id).one_or_none()
             if prt is not None:
-                chat_id = prt.chat.id
-
-                messages = Message.query.filter(Message.chat_id == chat_id,
+                result = []
+                messages = Message.query.filter(Message.chat_id == prt.chat.id,
                                                 Message.content.ilike('%' + content + '%')).all()
-
                 for message in messages:
-                    response.append(message.serialize)
+                    result.append(message.serialize)
 
-                return response
+                return result
             else:
                 return {'error': Error.UserNotFound}
         return {'error': Error.InvalidRequest}

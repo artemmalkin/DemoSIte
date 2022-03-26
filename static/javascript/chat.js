@@ -154,19 +154,20 @@ function getMessages(page, r_id) {
     getMessages.onload = function () {
         const response = JSON.parse(getMessages.response)
         const messages = response['messages.get']['messages']
-
-        if (messages.length !== 0) {
-            const scrollH = chat_log.scrollHeight
-
-            for (let message in messages) {
-                chat_log.prepend(createMessage(messages[message]))
-            }
-
-            chat_log.scrollTo(0, chat_log.scrollHeight - scrollH)
-            current_page += 1
+        if (messages) {
             chat_window.classList.add('chat-active')
-        } else {
-            current_page = undefined
+            if (messages.length !== 0) {
+                const scrollH = chat_log.scrollHeight
+
+                for (let message in messages) {
+                    chat_log.prepend(createMessage(messages[message]))
+                }
+
+                chat_log.scrollTo(0, chat_log.scrollHeight - scrollH)
+                current_page += 1
+            } else {
+                current_page = undefined
+            }
         }
     };
 }

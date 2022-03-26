@@ -1,6 +1,6 @@
 from typing import Union, Any
 
-from flask import render_template, session
+from flask import render_template
 from flask_login import current_user
 from werkzeug.datastructures import MultiDict
 
@@ -74,7 +74,6 @@ class Users:
         if chat:
             chat_id = chat.id
             set_chat_read(chat_id)
-            session.update(current_chat_id=chat_id)
             return {'chat_id': chat_id}
         else:
             return {'error': Error.UserNotFound}

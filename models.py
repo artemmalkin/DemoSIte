@@ -74,7 +74,7 @@ class Chat(db.Model, UserMixin):
     @property
     def serialize(self):
         data = {'recipient': recipient for recipient in self.users if recipient != current_user}
-        notifications = Message.query.filter(Message.chat_id == self.id, Message.sender_id != current_user.id,
+        notifications = Message.query.filter(Message.chat_id == self.id, Message.recipient_id == current_user.id,
                                              Message.is_read == False).count()
 
         return {

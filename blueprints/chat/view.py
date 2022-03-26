@@ -1,13 +1,14 @@
 import re
 
 from flask import render_template, request, session
-from flask_login import login_required
+from flask_login import login_required, current_user
 from flask_socketio import emit, join_room, leave_room
 
 from app import socketio
 from blueprints.chat import chat
 from blueprints.chat.tools import add_message, set_chat_read
 from forms import TypeMessageForm
+from models import ChatParticipation
 
 
 @chat.route('/')
@@ -31,11 +32,12 @@ def on_leave(data):
 
 @socketio.on('send_message')
 def handle_message(data):
-    current_chat_id = session.get('current_chat_id')
-    if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0 and current_chat_id is not None:
-        message = add_message(chat_id=session.get('current_chat_id'), recipient_id=data['recipient'],
+    prt = ChatParticipation.query.filter(ChatParticipation.recipient_id == data['recipient'],
+                                         ChatParticipation.sender_id == current_user.id).one_or_none()
+    if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0 and prt is not None:
+        message = add_message(chat_id=prt.chat_id, recipient_id=data['recipient'],
                               content=data['content'])
-        message['chat_id'] = current_chat_id
+        message['chat_id'] = prt.chat_id
 
         # Send the message to both users
         emit('received_message', message, room=session['_user_id'])

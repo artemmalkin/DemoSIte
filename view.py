@@ -7,13 +7,13 @@ from models import User
 
 
 @app.errorhandler(404)
-def http_error_handler():
+def http_error_handler(e):
     e = "Страница не найдена."
     return render_template('error.html', error=e), 404
 
 
 @app.errorhandler(401)
-def http_error_handler():
+def http_error_handler(e):
     flash("Для доступа к данной странице вы должны быть авторизованы.")
     return redirect(url_for('login'))
 

@@ -1,13 +1,20 @@
 from datetime import datetime
 
 from flask import url_for, request, abort
+from flask_admin import helpers
 from flask_admin.contrib import sqla
-from flask_admin.contrib.sqla import ModelView
-from flask_admin.helpers import get_url
 from flask_login import UserMixin, current_user
+from flask_security import Security, SQLAlchemyUserDatastore
 from werkzeug.utils import redirect
 
-from app import db, login_manager, admin
+from app import db, login_manager, admin, app
+
+
+roles_users = db.Table(
+    'roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
+)
 
 
 class ChatParticipation(db.Model, UserMixin):
@@ -26,12 +33,15 @@ class ChatParticipation(db.Model, UserMixin):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
 
     login = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(500), nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    roles = db.relationship('Role', secondary=roles_users, backref='users')
 
     def __repr__(self):
         return f"id: {self.id} login: {self.login}"
@@ -42,6 +52,20 @@ class User(db.Model, UserMixin):
             'id': self.id,
             'login': self.login
         }
+
+    def get_id(self):
+        return self.id
+
+
+class Role(db.Model, UserMixin):
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __repr__(self):
+        return f"id: {self.id} name: {self.name}"
 
 
 @login_manager.user_loader
@@ -120,6 +144,10 @@ class Message(db.Model, UserMixin):
         }
 
 
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+
 class CustomModelView(sqla.ModelView):
     def is_accessible(self):
         if current_user.is_authenticated:
@@ -127,9 +155,21 @@ class CustomModelView(sqla.ModelView):
                 return True
         return False
 
-    def inaccessible_callback(self, name, **kwargs):
-        # redirect to login page if user doesn't have access
-        return 'redirect(url_f))'
+    def _handle_view(self, name, **kwargs):
+        """
+        Override builtin _handle_view in order to redirect users when a view is not accessible.
+        """
+        if not self.is_accessible():
+            if current_user.is_authenticated:
+                # permission denied
+                abort(403)
+            else:
+                # login
+                return redirect(url_for('security.login', next=request.url))
+
+
+class RoleView(CustomModelView):
+    can_create = True
 
 
 class UserView(CustomModelView):
@@ -143,5 +183,16 @@ class NotificationView(CustomModelView):
     can_create = True
 
 
+admin.add_view(RoleView(Role, db.session, name='Роли'))
 admin.add_view(UserView(User, db.session, name='Пользователи'))
 admin.add_view(NotificationView(Notification, db.session, name='Уведомления'))
+
+
+@security.context_processor
+def security_context_processor():
+    return dict(
+        admin_base_template=admin.base_template,
+        admin_view=admin.index_view,
+        h=helpers,
+        get_url=url_for
+    )

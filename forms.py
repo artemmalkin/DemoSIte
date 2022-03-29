@@ -20,9 +20,6 @@ class RegisterForm(Form):
             flash('Пароли не совпадают.')
             raise validators.ValidationError('Passwords do not match')
 
-    def get_user(self):
-        return User.query.filter(User.login == self.data['login']).one_or_none()
-
 
 class LoginForm(Form):
     login = StringField('Логин', [validators.Length(min=4, max=15), validators.input_required()])

@@ -58,7 +58,6 @@ def login():
             login_user(form.get_user(), remember=True)
             return redirect(url_for('index'))
         else:
-            print(form.errors)
             context.update(form=form)
             return render_template('login.html', **context)
     else:

@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from flask import url_for, request, abort
-from flask_admin import helpers
+from flask import url_for, request, abort, render_template
+from flask_admin import helpers, expose, AdminIndexView, Admin
 from flask_admin.contrib import sqla
 from flask_login import UserMixin, current_user
-from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import Security, SQLAlchemyUserDatastore, RoleMixin
 from werkzeug.utils import redirect
 
-from app import db, login_manager, admin, app
+from app import db, login_manager, app
 
 
 roles_users = db.Table(
@@ -53,19 +53,21 @@ class User(db.Model, UserMixin):
             'login': self.login
         }
 
-    def get_id(self):
-        return self.id
+    def has_role(self, rolename):
+        if rolename in self.roles:
+            return True
+        return False
 
 
-class Role(db.Model, UserMixin):
+class Role(db.Model, RoleMixin):
     __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
-    def __repr__(self):
-        return f"id: {self.id} name: {self.name}"
+    def __str__(self):
+        return self.name
 
 
 @login_manager.user_loader
@@ -151,21 +153,21 @@ security = Security(app, user_datastore)
 class CustomModelView(sqla.ModelView):
     def is_accessible(self):
         if current_user.is_authenticated:
-            if current_user.login == 'grklakg':
+            if current_user.login == 'grklakg' or current_user.has_role('Учитель'):
                 return True
         return False
 
-    def _handle_view(self, name, **kwargs):
-        """
-        Override builtin _handle_view in order to redirect users when a view is not accessible.
-        """
-        if not self.is_accessible():
-            if current_user.is_authenticated:
-                # permission denied
-                abort(403)
-            else:
-                # login
-                return redirect(url_for('security.login', next=request.url))
+
+class MyAdminIndexView(AdminIndexView):
+
+    @expose('/')
+    def index(self):
+        if (current_user.is_authenticated and current_user.login == 'grklakg') or current_user.has_role('Учитель'):
+            return super(MyAdminIndexView, self).index()
+        return redirect(url_for('login'))
+
+
+admin = Admin(app, name='DemoSite', index_view=MyAdminIndexView(), template_mode='bootstrap3')
 
 
 class RoleView(CustomModelView):

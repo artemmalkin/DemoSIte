@@ -20,7 +20,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 
 # Flask-admin
-admin = Admin(app, name='DemoSite', template_mode='bootstrap3')
+
 
 # Blueprints initialisation
 from blueprints.api import api

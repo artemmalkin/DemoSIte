@@ -9,5 +9,10 @@ from blueprints.api.request import Request
 
 @api.route('/<section>.<method>')
 @login_required
-def api(section: str, method: str) -> Optional[dict[str, Any]]:
+def index(section: str, method: str) -> Optional[dict[str, Any]]:
     return Request(section, method, request.args).get_response()
+
+# TODO delete it
+@api.route('/methods')
+def methods() -> Optional[dict[str, Any]]:
+    return Request().get_method_list()

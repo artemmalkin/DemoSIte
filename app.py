@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_admin import Admin
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,9 @@ migrate = Migrate(app, db)
 
 # Current_user authenticating
 login_manager = LoginManager(app)
+
+# Flask-admin
+admin = Admin(app, name='DemoSite', template_mode='bootstrap3')
 
 # Blueprints initialisation
 from blueprints.api import api

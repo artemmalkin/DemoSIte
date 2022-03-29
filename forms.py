@@ -1,43 +1,43 @@
 from flask import flash
-from flask_login import login_user
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 from wtforms import Form, StringField, PasswordField, validators, TextAreaField, SubmitField
 
-from app import db
 from models import User
 
 
-class RegisterOrLoginForm(Form):
+class RegisterForm(Form):
+    login = StringField('Логин', [validators.Length(min=4, max=15), validators.input_required()])
+    password = PasswordField('Пароль', [validators.Length(min=8, max=50), validators.input_required()])
+    confirm_password = PasswordField('Подтвердите пароль', [validators.input_required()])
+
+    def validate_login(self, field):
+        if User.query.filter(User.login == self.data['login']).count() > 0:
+            flash('Логин уже зарегистрирован.')
+            raise validators.ValidationError('Duplicate username')
+
+    def validate_confirm_password(self, field):
+        if field.data != self.data['password']:
+            flash('Пароли не совпадают.')
+            raise validators.ValidationError('Passwords do not match')
+
+    def get_user(self):
+        return User.query.filter(User.login == self.data['login']).one_or_none()
+
+
+class LoginForm(Form):
     login = StringField('Логин', [validators.Length(min=4, max=15), validators.input_required()])
     password = PasswordField('Пароль', [validators.Length(min=8, max=50), validators.input_required()])
 
-    def validate_on_register(self):
-        user = User.query.filter(User.login == self.data['login']).first()
+    def validate_login(self, field):
+        user = User.query.filter(User.login == self.data['login']).one_or_none()
 
         if user:
-            flash('Логин уже зарегистрирован')
-            return False
-        else:
-            user = User(login=self.data['login'],
-                        password=generate_password_hash(self.data['password']))
+            if not check_password_hash(user.password, self.data['password']):
+                flash('Неправильный пароль.')
+                raise validators.ValidationError('Invalid Password')
 
-            db.session.add(user)
-            db.session.commit()
-
-            login_user(user, remember=True)
-
-            return True
-
-    def validate_on_login(self):
-        user = User.query.filter(User.login == self.data['login']).first()
-
-        if user:
-            if check_password_hash(user.password, self.data['password']):
-                login_user(user, remember=True)
-                return True
-
-        flash('Неправильный логин или пароль')
-        return False
+    def get_user(self):
+        return User.query.filter(User.login == self.data['login']).one_or_none()
 
 
 class TypeMessageForm(Form):

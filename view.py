@@ -1,8 +1,9 @@
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_required, current_user, logout_user
+from flask_login import login_required, current_user, logout_user, login_user
+from werkzeug.security import generate_password_hash
 
-from app import app
-from forms import RegisterOrLoginForm
+from app import app, db
+from forms import RegisterForm, LoginForm
 from models import User
 
 
@@ -28,9 +29,16 @@ def register():
     context = dict()
 
     if current_user.is_anonymous:
-        form = RegisterOrLoginForm(request.form)
+        form = RegisterForm(request.form)
 
-        if request.method == 'POST' and form.validate_on_register():
+        if request.method == 'POST' and form.validate():
+            user = User(login=form.data['login'],
+                        password=generate_password_hash(form.data['password']))
+
+            db.session.add(user)
+            db.session.commit()
+
+            login_user(user, remember=True)
             return redirect(url_for('index'))
         else:
             context.update(form=form)
@@ -44,11 +52,13 @@ def login():
     context = dict()
 
     if current_user.is_anonymous:
-        form = RegisterOrLoginForm(request.form)
+        form = LoginForm(request.form)
 
-        if request.method == 'POST' and form.validate_on_login():
+        if request.method == 'POST' and form.validate():
+            login_user(form.get_user(), remember=True)
             return redirect(url_for('index'))
         else:
+            print(form.errors)
             context.update(form=form)
             return render_template('login.html', **context)
     else:

@@ -279,6 +279,7 @@ header {
 }
 
 .content-block {
+    margin-top: .2em;
     background-color: white;
     border-radius: 0.5em;
     padding: 0.5em;
@@ -522,5 +523,20 @@ textarea {
     -moz-box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* content blocks */
+
+.bars {
+    display: flex;
+}
+
+.bars a {
+    text-decoration: none;
+    color: white;
+    border-radius: .2em;
+    padding: 1em;
+    margin: .1em;
+    width: 100%;
+    font-weight: bold;
+}
 
 

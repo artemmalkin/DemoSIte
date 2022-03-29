@@ -104,6 +104,7 @@ chat_window.addEventListener("click", function (event) {
 chat_log.addEventListener('scroll', function () {
     if (chat_log.scrollTop === 0) {
         if (current_page) {
+            current_page += 1
             getMessages(current_page, r_id)
         }
     }
@@ -164,7 +165,6 @@ function getMessages(page, r_id) {
                 }
 
                 chat_log.scrollTo(0, chat_log.scrollHeight - scrollH)
-                current_page += 1
             } else {
                 current_page = undefined
             }

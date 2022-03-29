@@ -1,8 +1,13 @@
 from datetime import datetime
 
+from flask import url_for, request, abort
+from flask_admin.contrib import sqla
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.helpers import get_url
 from flask_login import UserMixin, current_user
+from werkzeug.utils import redirect
 
-from app import db, login_manager
+from app import db, login_manager, admin
 
 
 class ChatParticipation(db.Model, UserMixin):
@@ -113,3 +118,30 @@ class Message(db.Model, UserMixin):
             'is_read': self.is_read,
             'date': [self.date.strftime("%Y:%M:%D:%H:%M"), self.date.strftime("%H:%M")]
         }
+
+
+class CustomModelView(sqla.ModelView):
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            if current_user.login == 'grklakg':
+                return True
+        return False
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return 'redirect(url_f))'
+
+
+class UserView(CustomModelView):
+    column_exclude_list = ['password']
+    can_create = False
+    column_searchable_list = ['login']
+    column_editable_list = ['login']
+
+
+class NotificationView(CustomModelView):
+    can_create = True
+
+
+admin.add_view(UserView(User, db.session, name='Пользователи'))
+admin.add_view(NotificationView(Notification, db.session, name='Уведомления'))

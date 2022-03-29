@@ -7,7 +7,7 @@ from blueprints.api.sections import Messages, Users, Chats, Notifications
 
 
 class Request:
-    def __init__(self, section: str, method: str, args: MultiDict[str, str]):
+    def __init__(self, section: str = None, method: str = None, args: MultiDict[str, str] = None):
         self.sections = {
             "messages": Messages(args),
             "users": Users(args),
@@ -26,3 +26,11 @@ class Request:
             return {f"{self.section}.{self.method}": method()}
         else:
             return {'error': Error.UnknownMethod}
+# TODO delete it
+    def get_method_list(self):
+        result = dict()
+        for key in self.sections.keys():
+            result[key] = []
+            for method in self.sections[key].method:
+                result[key].append(method)
+        return result

@@ -17,20 +17,24 @@
 </div>
 
 <div class="chat-message-block" id="chat-message-block">
-
+    <div class="button" id="show-chat-list"><</div>
+    <a href="" id="current-user-name" style="text-align: center; width: 100%; text-decoration: none">123</a>
     <script type="text/javascript">
         socket.on('received_message', function (message) {
-            if (message.chat_id == current_chat_id) {
-                if (toString(message.sender.id) === r_id) {
+            if (message.chat_id == chat_data.id) {
+                if (toString(message.sender.id) === chat_data.r_id) {
                     socket.emit('chat is read', {chat_id: message.chat_id})
+                }
+                let current_date = new Date(message.date).toISOString().slice(0, 10)
+                if (current_date !== chat_data.last_message_date) {
+                    chat_log.append(dateH(current_date));
                 }
                 chat_log.append(createMessage(message))
                 chat_log.scrollTo(0, chat_log.scrollHeight)
             }
-            getDialogs()
+            getDialogTabs()
         });
     </script>
-
     <div id="search-message">
         <div class="input-line">
             <input type="search" class="search-line" id="search-message-line" placeholder="Поиск сообщений">

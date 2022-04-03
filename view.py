@@ -24,7 +24,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register/', methods=['GET', 'POST'])
 def register():
     context = dict()
 
@@ -47,10 +47,9 @@ def register():
         return redirect(url_for('index'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     context = dict()
-
     if current_user.is_anonymous:
         form = LoginForm(request.form)
 

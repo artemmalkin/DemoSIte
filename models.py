@@ -1,14 +1,9 @@
 from datetime import datetime
 
-from flask import url_for, request, abort, render_template
-from flask_admin import helpers, expose, AdminIndexView, Admin
-from flask_admin.contrib import sqla
-from flask_login import UserMixin, current_user
-from flask_security import Security, SQLAlchemyUserDatastore, RoleMixin
-from werkzeug.utils import redirect
+# from flask_login import UserMixin, current_user
+from flask_security import RoleMixin, UserMixin, current_user
 
-from app import db, login_manager, app
-
+from app import db, login_manager
 
 roles_users = db.Table(
     'roles_users',
@@ -46,6 +41,9 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"id: {self.id} login: {self.login}"
 
+    def is_active(self):
+        return True
+
     @property
     def serialize(self):
         return {
@@ -53,10 +51,14 @@ class User(db.Model, UserMixin):
             'login': self.login
         }
 
-    def has_role(self, rolename):
-        if rolename in self.roles:
-            return True
-        return False
+    # def has_role(self, role_name):
+    #     if role_name in self.roles:
+    #         return True
+    #     return False
+    #
+    # def has_permission(self, permission_name):
+    #     for role in self.roles:
+    #         return role.__dict__.get(permission_name)
 
 
 class Role(db.Model, RoleMixin):
@@ -142,59 +144,5 @@ class Message(db.Model, UserMixin):
             'sender': self.sender.serialize,
             'content': self.content,
             'is_read': self.is_read,
-            'date': [self.date.strftime("%Y:%M:%D:%H:%M"), self.date.strftime("%H:%M")]
+            'date': self.date.strftime("%m/%d/%Y") + ' ' + self.date.strftime("%H:%M") + ' UTC'
         }
-
-
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
-
-
-class CustomModelView(sqla.ModelView):
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            if current_user.login == 'grklakg' or current_user.has_role('Учитель'):
-                return True
-        return False
-
-
-class MyAdminIndexView(AdminIndexView):
-
-    @expose('/')
-    def index(self):
-        if (current_user.is_authenticated and current_user.login == 'grklakg') or current_user.has_role('Учитель'):
-            return super(MyAdminIndexView, self).index()
-        return redirect(url_for('login'))
-
-
-admin = Admin(app, name='DemoSite', index_view=MyAdminIndexView(), template_mode='bootstrap3')
-
-
-class RoleView(CustomModelView):
-    can_create = True
-
-
-class UserView(CustomModelView):
-    column_exclude_list = ['password']
-    can_create = False
-    column_searchable_list = ['login']
-    column_editable_list = ['login']
-
-
-class NotificationView(CustomModelView):
-    can_create = True
-
-
-admin.add_view(RoleView(Role, db.session, name='Роли'))
-admin.add_view(UserView(User, db.session, name='Пользователи'))
-admin.add_view(NotificationView(Notification, db.session, name='Уведомления'))
-
-
-@security.context_processor
-def security_context_processor():
-    return dict(
-        admin_base_template=admin.base_template,
-        admin_view=admin.index_view,
-        h=helpers,
-        get_url=url_for
-    )

@@ -1,6 +1,38 @@
-// current recipient id
-let r_id = urlParams.get('user_id');
-// last page number of message list which was got
-let current_page = 1;
-// currently, open chat
-let current_chat_id
+let chat_data = {
+    is_active: false,
+    id: null,
+    r_id: null,
+    r_login: null,
+    current_page: null,
+    last_date: null,
+    last_message_date: null,
+};
+
+function refresh_chat(user_id) {
+    if (user_id) {
+        const getChat = Get('chats.get_chat', `user_id=${user_id}`);
+        getChat.onload = function () {
+            const response = JSON.parse(getChat.response);
+            chat_data = {
+                is_active: true,
+                id: response['chats.get_chat']['chat_id'],
+                r_id: user_id,
+                r_login: response['chats.get_chat']['recipient_login'],
+                next_page: 1,
+                last_date: null,
+                last_message_date: null,
+            };
+            document.getElementById('chat-log').innerHTML = "";
+            document.getElementById('current-user-name').innerText = chat_data.r_login;
+            document.getElementById('current-user-name').href = '../profile/' + chat_data.r_id;
+
+
+            getMessages(chat_data.next_page, chat_data.r_id, true);
+            updateNotifications();
+            getDialogTabs();
+        };
+    } else {
+        getDialogTabs();
+    }
+}
+

@@ -5,10 +5,8 @@ const chat_log = document.getElementById('chat-log');
 if (act === 'new') {
     document.body.classList.add('act-new-chat')
 }
-getDialogs()
-if (r_id) {
-    getMessages(current_page, r_id)
-}
+
+refresh_chat(urlParams.get("user_id"))
 
 chat_window.addEventListener("click", function (event) {
 
@@ -36,6 +34,18 @@ chat_window.addEventListener("click", function (event) {
 
             break
 
+        case "show-chat-list":
+            if (document.getElementById('chat-list').classList.contains('hidden-w')) {
+                document.getElementById('chat-list').classList.remove("hidden-w");
+                document.getElementById('show-chat-list').innerText = '<'
+            } else {
+                document.getElementById('chat-list').classList.add("hidden-w");
+                document.getElementById('show-chat-list').innerText = '>'
+            }
+
+
+            break
+
         case "close-search-message":
 
             document.body.classList.remove("act-search-message");
@@ -54,21 +64,8 @@ chat_window.addEventListener("click", function (event) {
                 chat_window.classList.remove("act-new-chat");
                 document.getElementById(`search-users-for-new-chat`).removeEventListener("keyup", searchUsers);
             }
-
-            const getChat = Get('users.chat_id', `user_id=${user_id}`)
-            getChat.onload = function () {
-                const response = JSON.parse(getChat.response)
-
-                r_id = user_id;
-                current_chat_id = response['users.chat_id']['chat_id']
-                current_page = 1
-
-                chat_log.innerHTML = ''
-
-                getMessages(current_page, r_id)
-                getDialogs()
-                updateNotifications()
-            }
+            chat_log.removeEventListener('scroll', onScrollgetMessages)
+            refresh_chat(user_id)
 
             break
 
@@ -76,7 +73,7 @@ chat_window.addEventListener("click", function (event) {
 
             const content = document.getElementById('input_message').value;
 
-            socket.emit('send_message', {recipient: parseInt(r_id), content: content});
+            socket.emit('send_message', {recipient: parseInt(chat_data.r_id), content: content});
             document.getElementById('input_message').value = '';
 
             break
@@ -87,9 +84,7 @@ chat_window.addEventListener("click", function (event) {
 
             const getSearchUser = Get('users.search', `username=${value}&p=${target.getAttribute('page')}`, document.getElementById(`search-user-result`))
             getSearchUser.onload = function () {
-                const response = JSON.parse(getSearchUser.response)
-
-                document.getElementById(`search-user-result`).innerHTML = response['users.search']
+                document.getElementById(`search-user-result`).innerHTML = JSON.parse(getSearchUser.response)['users.search']
             };
 
             break
@@ -100,15 +95,14 @@ chat_window.addEventListener("click", function (event) {
 
     }
 });
-
-chat_log.addEventListener('scroll', function () {
+function onScrollgetMessages() {
     if (chat_log.scrollTop === 0) {
-        if (current_page) {
-            current_page += 1
-            getMessages(current_page, r_id)
+        if (chat_data.next_page) {
+            getMessages(chat_data.next_page, chat_data.r_id)
         }
     }
-})
+}
+
 document.getElementById(`search-message-line`).addEventListener("keyup", searchMessage);
 
 
@@ -118,9 +112,7 @@ function searchUsers(event = KeyboardEvent) {
         if (value) {
             const getSearchUser = Get('users.search', `username=${value}&p=1`, document.getElementById(`search-user-result`))
             getSearchUser.onload = function () {
-                const response = JSON.parse(getSearchUser.response)
-
-                document.getElementById(`search-user-result`).innerHTML = response['users.search']
+                document.getElementById(`search-user-result`).innerHTML = JSON.parse(getSearchUser.response)['users.search']
             };
         }
     }
@@ -132,14 +124,14 @@ function searchMessage(event = KeyboardEvent) {
         if (value) {
             document.body.classList.add('act-search-message')
 
-            const getSearchMessage = Get('messages.search', `content=${value}&user_id=${r_id}`, document.getElementById('search-message-result'))
+            const getSearchMessage = Get('messages.search', `content=${value}&user_id=${chat_data.r_id}`, document.getElementById('search-message-result'))
             getSearchMessage.onload = function () {
-                const response = JSON.parse(getSearchMessage.response)
+                const response = JSON.parse(getSearchMessage.response)['messages.search']
 
                 document.getElementById('search-message-result').innerHTML = ''
 
-                for (let message in response['messages.search']) {
-                    document.getElementById('search-message-result').appendChild(createMessage(response['messages.search'][message]))
+                for (let message in response) {
+                    document.getElementById('search-message-result').appendChild(createMessage(response[message]))
                 }
                 if (document.getElementById('search-message-result').innerHTML === '') {
                     document.getElementById('search-message-result').innerHTML = 'Ничего не найдено.'
@@ -149,27 +141,60 @@ function searchMessage(event = KeyboardEvent) {
     }
 }
 
+function getMessages(page, r_id, is_new = false) {
+    const Messages = Get('messages.get', `p=${page}&user_id=${r_id}`);
+    Messages.onload = function () {
 
-function getMessages(page, r_id) {
-    const getMessages = Get('messages.get', `p=${page}&user_id=${r_id}`)
-    getMessages.onload = function () {
-        const response = JSON.parse(getMessages.response)
-        const messages = response['messages.get']['messages']
+        const response = JSON.parse(Messages.response);
+        const messages = response['messages.get']['messages'];
+
+        if (response['messages.get'].has_next) {
+            chat_data.next_page += 1;
+        } else {
+            chat_data.next_page = null;
+        }
+
         if (messages) {
-            chat_window.classList.add('chat-active')
+            chat_window.classList.add('chat-active');
+
             if (messages.length !== 0) {
-                const scrollH = chat_log.scrollHeight
+                const scrollH = chat_log.scrollHeight;
 
                 for (let message in messages) {
+                    let current_date = new Date(messages[message].date).toISOString().slice(0, 10)
+
+                    if (chat_data.last_date !== null && current_date !== chat_data.last_date) {
+                        chat_log.prepend(dateH(chat_data.last_date));
+                    }
                     chat_log.prepend(createMessage(messages[message]))
                 }
+                if (chat_data.next_page === null) {
+                    chat_log.prepend(dateH(chat_data.last_date));
+                }
 
-                chat_log.scrollTo(0, chat_log.scrollHeight - scrollH)
-            } else {
-                current_page = undefined
+                if (!is_new) {
+                    chat_log.scrollTo(0, chat_log.scrollHeight - scrollH);
+                } else {
+                    chat_log.scrollTo(0, chat_log.scrollHeight);
+                    chat_log.addEventListener('scroll', onScrollgetMessages)
+                    chat_data.last_message_date = messages[0].date.toISOString().slice(0, 10)
+                }
             }
         }
     };
+}
+function dateH(datestr) {
+    let h = document.createElement('h6');
+    let p = document.createElement('p');
+    p.innerText = datestr;
+    h.appendChild(p)
+    return h
+}
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i
+    }
+    return i;
 }
 
 function createMessage(message) {
@@ -179,8 +204,9 @@ function createMessage(message) {
 
     message_item.className = 'message';
 
-    message_time.dateTime = message.date[0];
-    message_time.innerText = ` ${message.date[1]}`;
+    let date = new Date(message.date)
+    message_time.dateTime = message.date
+    message_time.innerText = `${date.getHours()}:${addZero(date.getMinutes())}`;
 
     if (me === message.sender.id) {
         message_item.classList.add('me');
@@ -192,25 +218,27 @@ function createMessage(message) {
     message_item.appendChild(message_content);
     message_item.appendChild(message_time);
 
+    chat_data.last_date = date.toISOString().slice(0, 10)
+
     return message_item
 }
 
 
-function getDialogs() {
-    let getDialogs = Get('chats.get')
+function getDialogTabs() {
+    let DialogsTabs = Get('chats.get_list')
 
-    getDialogs.onload = function () {
-        const response = JSON.parse(getDialogs.response)
+    DialogsTabs.onload = function () {
+        const response = JSON.parse(DialogsTabs.response)['chats.get_list']
 
         chat_list_items.innerHTML = ''
 
-        for (const dialog in response['chats.get']['chats']) {
-            chat_list_items.append(createDialog(response['chats.get']['chats'][dialog], r_id))
+        for (const dialog in response['chats']) {
+            chat_list_items.append(createDialogTab(response['chats'][dialog], chat_data.r_id))
         }
     }
 }
 
-function createDialog(chat, recipient_id) {
+function createDialogTab(chat, recipient_id) {
     let user_item = document.createElement('div');
     let a = document.createElement('a');
 
@@ -233,3 +261,6 @@ function createDialog(chat, recipient_id) {
 
     return user_item
 }
+
+
+

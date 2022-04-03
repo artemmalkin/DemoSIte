@@ -41,7 +41,7 @@ class Messages(Section):
         if prt:
             messages = Message.query.filter_by(chat_id=prt.chat.id).order_by(Message.id.desc()).paginate(
                 page, 15, False)
-            return {'messages': [x.serialize for x in messages.items]}
+            return {'has_next': messages.has_next, 'messages': [x.serialize for x in messages.items]}
         else:
             return {'error': Error.UserNotFound}
 
@@ -68,21 +68,9 @@ class Users(Section):
 
     def __init__(self, args: MultiDict[str, str]):
         method_dict = {
-            "chat_id": self.chat_id,
             "search": self.search
         }
         super().__init__(args, method_dict)
-
-    def chat_id(self) -> dict:
-        user_id: int = self.args.get('user_id', type=int)
-
-        chat = chat_or_none(user_id)
-        if chat:
-            chat_id = chat.id
-            set_chat_read(chat_id)
-            return {'chat_id': chat_id}
-        else:
-            return {'error': Error.UserNotFound}
 
     def search(self) -> str:
         username: str = self.args.get('username')
@@ -103,12 +91,24 @@ class Chats(Section):
 
     def __init__(self, args: MultiDict[str, str]):
         method_dict = {
-            "get": self.get
+            "get_list": self.get_list,
+            "get_chat": self.get_chat
         }
         super().__init__(args, method_dict)
 
+    def get_chat(self) -> dict:
+        user_id: int = self.args.get('user_id', type=int)
+
+        chat = chat_or_none(user_id)
+        if chat:
+            chat_id = chat.id
+            set_chat_read(chat_id)
+            return {'chat_id': chat_id, 'recipient_login': User.query.get(user_id).login}
+        else:
+            return {'error': Error.UserNotFound}
+
     @staticmethod
-    def get() -> dict:
+    def get_list() -> dict:
         return {'chats': [chat.serialize for chat in current_user.chats]}
 
 

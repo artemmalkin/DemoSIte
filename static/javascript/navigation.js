@@ -1,11 +1,5 @@
 const menu_auth = document.getElementById('menu-auth');
 
-const getChat = Get('users.chat_id', `user_id=${urlParams.get('user_id')}`)
-getChat.onload = function () {
-    const response = JSON.parse(getChat.response)
-    current_chat_id = response['users.chat_id']['chat_id']
-}
-
 updateNotifications()
 
 menu_auth.addEventListener("click", function (event) {
@@ -24,8 +18,7 @@ menu_auth.addEventListener("click", function (event) {
                 ntf_menu.classList.add('active')
                 let get = Get('notifications.get', '', document.getElementById('notification-list'))
                 get.onload = function () {
-                    const response = JSON.parse(get.response)
-                    document.getElementById('notification-list').innerHTML = response['notifications.get']
+                    document.getElementById('notification-list').innerHTML = JSON.parse(get.response)['notifications.get']
                 };
             }
 
@@ -57,23 +50,3 @@ function updateNotifications() {
 }
 
 
-/**
- * Get the XmlHttpRequest.
- *
- * @param {string} methodName Name of the method like 'messages.search'.
- * @param {string} params Parameters for the method like 'user=1&content=hello'.
- * @param {HTMLElement} loadingElement HtmlElement which will be showing a loading gif inside himself while response is load.
- * @return {XMLHttpRequest} XMLHttpRequest.
- */
-function Get(methodName, params = '', loadingElement = undefined) {
-    let xml = new XMLHttpRequest();
-    xml.open("GET", `/api/${methodName}?${params}`, true);
-    xml.send(null);
-    setTimeout(function () {
-        if (xml.status === 0) {
-            loadingElement.innerHTML = loading.outerHTML
-        }
-    }, 200)
-
-    return xml;
-}

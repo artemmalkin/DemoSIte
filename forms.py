@@ -32,6 +32,9 @@ class LoginForm(Form):
             if not check_password_hash(user.password, self.data['password']):
                 flash('Неправильный пароль.')
                 raise validators.ValidationError('Invalid Password')
+        else:
+            flash('Неправильный логин.')
+            raise validators.ValidationError('Invalid login')
 
     def get_user(self):
         return User.query.filter(User.login == self.data['login']).one_or_none()

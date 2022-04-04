@@ -14,9 +14,7 @@ from models import ChatParticipation
 @chat.route('/')
 @login_required
 def index():
-    context = dict()
-    context.update(type_message_form=TypeMessageForm(request.form))
-    return render_template('chat.html', **context)
+    return render_template('chat.html', type_message_form=TypeMessageForm(request.form))
 
 
 @socketio.on('join')
@@ -37,6 +35,7 @@ def handle_message(data):
     if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0 and prt is not None:
         message = add_message(chat_id=prt.chat_id, recipient_id=data['recipient'],
                               content=data['content'])
+
         message['chat_id'] = prt.chat_id
 
         # Send the message to both users

@@ -8,13 +8,18 @@ from models import User
 
 
 @app.errorhandler(404)
-def http_error_handler(e):
+def http_error_handler(_):
     e = "Страница не найдена."
     return render_template('error.html', error=e), 404
 
 
-@app.errorhandler(401)
+@app.errorhandler(403)
 def http_error_handler(e):
+    return render_template('error.html', error=e), 403
+
+
+@app.errorhandler(401)
+def http_error_handler(_):
     flash("Для доступа к данной странице вы должны быть авторизованы.")
     return redirect(url_for('login'))
 
@@ -26,8 +31,6 @@ def index():
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
-    context = dict()
-
     if current_user.is_anonymous:
         form = RegisterForm(request.form)
 
@@ -41,15 +44,13 @@ def register():
             login_user(user, remember=True)
             return redirect(url_for('index'))
         else:
-            context.update(form=form)
-            return render_template('register.html', **context)
+            return render_template('register.html', form=form)
     else:
         return redirect(url_for('index'))
 
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    context = dict()
     if current_user.is_anonymous:
         form = LoginForm(request.form)
 
@@ -57,8 +58,7 @@ def login():
             login_user(form.get_user(), remember=True)
             return redirect(url_for('index'))
         else:
-            context.update(form=form)
-            return render_template('login.html', **context)
+            return render_template('login.html', form=form)
     else:
         return redirect(url_for('index'))
 

@@ -126,10 +126,10 @@ class Notifications(Section):
 
     @staticmethod
     def get() -> str:
-        message_notifications = Message.query.filter(Message.recipient_id == current_user.id,
-                                                     Message.is_read == False).count()
+        message_count = Message.query.filter(Message.recipient_id == current_user.id,
+                                             Message.is_read == False).count()
 
-        return render_template('notification-list.html', msg_notifications=message_notifications)
+        return render_template('notification-list.html', msg_notifications_count=message_count)
 
     @staticmethod
     def count() -> int:

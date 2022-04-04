@@ -95,6 +95,7 @@ chat_window.addEventListener("click", function (event) {
 
     }
 });
+
 function onScrollgetMessages() {
     if (chat_log.scrollTop === 0) {
         if (chat_data.next_page) {
@@ -183,6 +184,7 @@ function getMessages(page, r_id, is_new = false) {
         }
     };
 }
+
 function dateH(datestr) {
     let h = document.createElement('h6');
     let p = document.createElement('p');
@@ -190,6 +192,7 @@ function dateH(datestr) {
     h.appendChild(p)
     return h
 }
+
 function addZero(i) {
     if (i < 10) {
         i = "0" + i
@@ -253,6 +256,7 @@ function createDialogTab(chat, recipient_id) {
 
     a.href = `../profile/${chat.recipient.id}`
     a.innerText = chat.recipient.login
+
     if (chat.notifications) {
         a.innerText += ` (+${chat.notifications})`
     }

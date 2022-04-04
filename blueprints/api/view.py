@@ -12,7 +12,7 @@ from blueprints.api.request import Request
 def index(section: str, method: str) -> Optional[dict[str, Any]]:
     return Request(section, method, request.args).get_response()
 
-# TODO delete it
+
 @api.route('/methods')
 def methods() -> Optional[dict[str, Any]]:
     return Request().get_method_list()

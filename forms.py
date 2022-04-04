@@ -10,7 +10,8 @@ class RegisterForm(Form):
     password = PasswordField('Пароль', [validators.Length(min=8, max=50), validators.input_required()])
     confirm_password = PasswordField('Подтвердите пароль', [validators.input_required()])
 
-    def validate_login(self, field):
+    def validate_login(self, _):
+        # Check login for uniqueness
         if User.query.filter(User.login == self.data['login']).count() > 0:
             flash('Логин уже зарегистрирован.')
             raise validators.ValidationError('Duplicate username')
@@ -25,7 +26,8 @@ class LoginForm(Form):
     login = StringField('Логин', [validators.Length(min=4, max=15), validators.input_required()])
     password = PasswordField('Пароль', [validators.Length(min=8, max=50), validators.input_required()])
 
-    def validate_login(self, field):
+    def validate_login(self, _):
+        # Check login for existence and correct password
         user = User.query.filter(User.login == self.data['login']).one_or_none()
 
         if user:

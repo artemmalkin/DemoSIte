@@ -1,8 +1,8 @@
-{# TODO remove it #}
-{% set sum = msg_notifications + current_user.notifications|count %}
+{% set sum = msg_notifications_count + current_user.notifications|count %}
 
 {% if sum %}
-{% if msg_notifications %}
+
+{% if msg_notifications_count %}
     <div class="ntf-item">
         <div class="ntf-title">Новое сообщение!</div>
         <div class="ntf-content">Непрочитанных сообщений в чате: {{ msg_notifications }}</div>

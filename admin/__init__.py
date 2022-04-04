@@ -13,6 +13,10 @@ security = Security(app, user_datastore)
 
 
 class BaseView(sqla.ModelView):
+    """
+        Base model for Flask-Admin views
+    """
+
     can_export = True
     can_view_details = True
 
@@ -28,8 +32,13 @@ class BaseView(sqla.ModelView):
                 # login
                 return redirect(url_for('login'))
 
+# TODO fix duplicating
 
 class RegularView(BaseView):
+    """
+        View for moderation functions.
+    """
+
     def is_accessible(self):
         # set accessibility...
         if not current_user.is_authenticated:
@@ -70,6 +79,9 @@ class RegularView(BaseView):
 
 
 class LookupView(BaseView):
+    """
+        View for looking without editing, except: ADMIN and SUPERVISOR
+    """
     def is_accessible(self):
         # set accessibility...
         if not current_user.is_authenticated:
@@ -110,6 +122,9 @@ class LookupView(BaseView):
 
 
 class SuperView(BaseView):
+    """
+        View only for ADMIN, others has no access to here.
+    """
     can_export = True
 
     def is_accessible(self):

@@ -26,7 +26,7 @@ class Request:
             return {f"{self.section}.{self.method}": method()}
         else:
             return {'error': Error.UnknownMethod}
-# TODO delete it
+
     def get_method_list(self):
         result = dict()
         for key in self.sections.keys():

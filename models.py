@@ -1,6 +1,5 @@
 from datetime import datetime
 
-# from flask_login import UserMixin, current_user
 from flask_security import RoleMixin, UserMixin, current_user
 
 from app import db, login_manager
@@ -51,14 +50,11 @@ class User(db.Model, UserMixin):
             'login': self.login
         }
 
-    # def has_role(self, role_name):
-    #     if role_name in self.roles:
-    #         return True
-    #     return False
-    #
-    # def has_permission(self, permission_name):
-    #     for role in self.roles:
-    #         return role.__dict__.get(permission_name)
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Load User model in current_user
+    return User.query.get(user_id)
 
 
 class Role(db.Model, RoleMixin):
@@ -70,11 +66,6 @@ class Role(db.Model, RoleMixin):
 
     def __str__(self):
         return self.name
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
 
 
 class Notification(db.Model, UserMixin):

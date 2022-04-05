@@ -69,11 +69,17 @@
 
 .me {
     align-self: flex-end;
+    color: white;
+    background-color: cornflowerblue;
     border-radius: 1em 1em 0 1em;
 }
 
 .me .message-from {
     text-align: end;
+}
+
+.me time {
+    color: white;
 }
 
 .message-from {

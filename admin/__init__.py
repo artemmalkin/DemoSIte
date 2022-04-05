@@ -32,7 +32,6 @@ class BaseView(sqla.ModelView):
                 # login
                 return redirect(url_for('login'))
 
-# TODO fix duplicating
 
 class RegularView(BaseView):
     """
@@ -78,49 +77,6 @@ class RegularView(BaseView):
         return False
 
 
-class LookupView(BaseView):
-    """
-        View for looking without editing, except: ADMIN and SUPERVISOR
-    """
-    def is_accessible(self):
-        # set accessibility...
-        if not current_user.is_authenticated:
-            return False
-
-        # roles not tied to ascending permissions...
-        if not current_user.has_role('export'):
-            self.can_export = False
-
-        # roles with ascending permissions...
-        if current_user.has_role('admin'):
-            self.can_create = True
-            self.can_edit = True
-            self.can_delete = True
-            self.can_export = True
-            return True
-        if current_user.has_role('supervisor'):
-            self.can_create = True
-            self.can_edit = True
-            self.can_delete = False
-            return True
-        if current_user.has_role('user'):
-            self.can_create = False
-            self.can_edit = False
-            self.can_delete = False
-            return True
-        if current_user.has_role('create'):
-            self.can_create = False
-            self.can_edit = False
-            self.can_delete = False
-            return True
-        if current_user.has_role('read'):
-            self.can_create = False
-            self.can_edit = False
-            self.can_delete = False
-            return True
-        return False
-
-
 class SuperView(BaseView):
     """
         View only for ADMIN, others has no access to here.
@@ -142,9 +98,8 @@ class SuperView(BaseView):
 #
 #     @expose('/')
 #     def index(self):
-#         if current_user.is_authenticated:
-#             return super(MyAdminIndexView, self).index()
-#         return redirect(url_for('login'))
+#         return super(MyAdminIndexView, self).index()
+
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.

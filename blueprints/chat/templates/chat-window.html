@@ -27,6 +27,7 @@
                 }
                 let current_date = new Date(message.date).toISOString().slice(0, 10)
                 if (current_date !== chat_data.last_message_date) {
+                    chat_data.last_message_date = current_date
                     chat_log.append(dateH(current_date));
                 }
                 chat_log.append(createMessage(message))

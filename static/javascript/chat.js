@@ -172,13 +172,12 @@ function getMessages(page, r_id, is_new = false) {
                 if (chat_data.next_page === null) {
                     chat_log.prepend(dateH(chat_data.last_date));
                 }
-
                 if (!is_new) {
                     chat_log.scrollTo(0, chat_log.scrollHeight - scrollH);
                 } else {
                     chat_log.scrollTo(0, chat_log.scrollHeight);
                     chat_log.addEventListener('scroll', onScrollgetMessages)
-                    chat_data.last_message_date = messages[0].date.toISOString().slice(0, 10)
+                    chat_data.last_message_date = new Date(messages[0].date).toISOString().slice(0, 10)
                 }
             }
         }

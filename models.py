@@ -44,6 +44,11 @@ class User(db.Model, UserMixin):
         return True
 
     @property
+    def is_has_access(self):
+        # Check access for flask-admin
+        return any(True for r in self.roles if r in ['admin', 'supervisor', 'user', 'create', 'read'])
+
+    @property
     def serialize(self):
         return {
             'id': self.id,

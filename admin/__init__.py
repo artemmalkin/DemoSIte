@@ -1,5 +1,5 @@
-from flask import url_for, abort
-from flask_admin import AdminIndexView, Admin, helpers as admin_helpers
+from flask import url_for
+from flask_admin import AdminIndexView, Admin, helpers as admin_helpers, expose
 from flask_admin.contrib import sqla
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from werkzeug.utils import redirect
@@ -25,12 +25,7 @@ class BaseView(sqla.ModelView):
         Override builtin _handle_view in order to redirect users when a view is not accessible.
         """
         if not self.is_accessible():
-            if current_user.is_authenticated:
-                # permission denied
-                abort(403)
-            else:
-                # login
-                return redirect(url_for('login'))
+            return redirect(url_for('index'))
 
 
 class RegularView(BaseView):
@@ -79,7 +74,7 @@ class RegularView(BaseView):
 
 class SuperView(BaseView):
     """
-        View only for ADMIN, others has no access to here.
+        View only for ADMIN. Other has no access to here.
     """
     can_export = True
 
@@ -94,11 +89,13 @@ class SuperView(BaseView):
         return False
 
 
-# class MyAdminIndexView(AdminIndexView):
-#
-#     @expose('/')
-#     def index(self):
-#         return super(MyAdminIndexView, self).index()
+class MyAdminIndexView(AdminIndexView):
+
+    @expose('/')
+    def index(self):
+        if current_user.is_authenticated and current_user.is_has_access:
+            return super(MyAdminIndexView, self).index()
+        return redirect(url_for('index'))
 
 
 # define a context processor for merging flask-admin's template context into the
@@ -112,7 +109,7 @@ def security_context_processor():
     )
 
 
-admin = Admin(app, name='DemoSite', index_view=AdminIndexView(), template_mode='bootstrap3')
+admin = Admin(app, name='DemoSite', index_view=MyAdminIndexView(), template_mode='bootstrap3')
 
 
 class UserView(SuperView):

@@ -44,7 +44,7 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                            {% if current_user.is_authenticated and (current_user.has_role('admin') or current_user.has_role('supervisor') or current_user.has_role('user')) %}
+                            {% if current_user.is_authenticated and current_user.is_has_access %}
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown"
                                        role="button"

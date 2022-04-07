@@ -16,10 +16,13 @@ menu_auth.addEventListener("click", function (event) {
                 ntf_menu.classList.remove('active')
             } else {
                 ntf_menu.classList.add('active')
-                let get = Get('notifications.get', '', document.getElementById('notification-list'))
-                get.onload = function () {
-                    document.getElementById('notification-list').innerHTML = JSON.parse(get.response)['notifications.get']
-                };
+                if (notifications.has_new) {
+                    let get = Get('notifications.get', '', document.getElementById('notification-list'))
+                    get.onload = function () {
+                        document.getElementById('notification-list').innerHTML = JSON.parse(get.response)['notifications.get']
+                    };
+                    notifications.has_new = false
+                }
             }
 
             break
@@ -40,6 +43,7 @@ function updateNotifications() {
             document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification.svg`)
         } else {
             document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification-active.svg`)
+            notifications.has_new = true
         }
         if (count <= 99) {
             document.getElementById('notification-count').innerText = count !== 0 ? count : ''

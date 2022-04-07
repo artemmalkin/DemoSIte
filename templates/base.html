@@ -90,6 +90,7 @@
                         socket.on('received_message', function (data) {
                             if (data.sender.id !== me && data.chat_id !== chat_data.id) {
                                 updateNotifications()
+                                notifications.has_new = true
 
                                 let show = true
                                 let interval_id = setInterval(function () {

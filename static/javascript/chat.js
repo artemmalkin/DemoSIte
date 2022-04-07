@@ -6,7 +6,7 @@ if (act === 'new') {
     document.body.classList.add('act-new-chat')
 }
 
-refresh_chat(urlParams.get("user_id"))
+refresh_chat(urlParams.get("user_id"), true)
 
 chat_window.addEventListener("click", function (event) {
 
@@ -57,6 +57,11 @@ chat_window.addEventListener("click", function (event) {
 
             const user_id = target.getAttribute("user_id");
 
+            if (chat_data.r_id) {
+                document.querySelector(`[user_id="${chat_data.r_id}"]`).classList.remove('current')
+            }
+            target.classList.add('current')
+
             urlParams.set('user_id', user_id)
             history.pushState({}, null, `?${urlParams.toString()}`);
 
@@ -65,7 +70,8 @@ chat_window.addEventListener("click", function (event) {
                 document.getElementById(`search-users-for-new-chat`).removeEventListener("keyup", searchUsers);
             }
             chat_log.removeEventListener('scroll', onScrollgetMessages)
-            refresh_chat(user_id)
+            let has_ntf = target.getAttribute('has_ntf')? true : false
+            refresh_chat(user_id, has_ntf, has_ntf)
 
             break
 
@@ -258,6 +264,7 @@ function createDialogTab(chat, recipient_id) {
 
     if (chat.notifications) {
         a.innerText += ` (+${chat.notifications})`
+        user_item.setAttribute('has_ntf', '1')
     }
 
     user_item.appendChild(a)

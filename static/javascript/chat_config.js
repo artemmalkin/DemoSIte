@@ -8,7 +8,7 @@ let chat_data = {
     last_message_date: null,
 };
 
-function refresh_chat(user_id) {
+function refresh_chat(user_id, DialogTabs=false, Notifications=false) {
     if (user_id) {
         const getChat = Get('chats.get_chat', `user_id=${user_id}`);
         getChat.onload = function () {
@@ -28,8 +28,13 @@ function refresh_chat(user_id) {
 
 
             getMessages(chat_data.next_page, chat_data.r_id, true);
-            updateNotifications();
-            getDialogTabs();
+
+            if (Notifications) {
+                updateNotifications();
+            }
+            if (DialogTabs) {
+                getDialogTabs();
+            }
         };
     } else {
         getDialogTabs();

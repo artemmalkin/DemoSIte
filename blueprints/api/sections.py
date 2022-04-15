@@ -1,12 +1,14 @@
+import json
 from typing import Union, Any
 
-from flask import render_template
+from flask import render_template, url_for
 from flask_login import current_user
 from werkzeug.datastructures import MultiDict
 
+from app import db
 from blueprints.api.errors import Error
 from blueprints.chat.tools import chat_or_none, set_chat_read
-from models import ChatParticipation, Message, User
+from models import ChatParticipation, Message, User, Notification
 
 
 class Section:
@@ -76,12 +78,15 @@ class Users(Section):
         username: str = self.args.get('username')
         page: int = self.args.get('p', default=1, type=int)
 
-        users = None
+        context = dict()
+
         if username:
-            users = User.query.filter(User.login.ilike('%' + username + '%'),
-                                      User.login != current_user.login).order_by(User.id.desc()).paginate(page, 5,
-                                                                                                          False)
-        return render_template('user-list.html', page=page, users=users)
+            pagination = User.query.filter(User.login.ilike('%' + username + '%'),
+                                           User.login != current_user.login).order_by(User.id.desc()).paginate(page, 5,
+                                                                                                               False)
+            context.update(pagination=pagination, getFunc='getUsers', page=page)
+
+        return render_template('user-list.html', **context)
 
 
 class Chats(Section):
@@ -124,15 +129,40 @@ class Notifications(Section):
         }
         super().__init__(args, method_dict)
 
-    @staticmethod
-    def get() -> str:
-        message_count = Message.query.filter(Message.recipient_id == current_user.id,
-                                             Message.is_read == False).count()
+    def get(self) -> dict:
+        page: int = self.args.get('p', type=int)
 
-        return render_template('notification-list.html', msg_notifications_count=message_count)
+        response = {}
+
+        def ntf_handle(ntf):
+            ntf_json = ntf.serialize
+            ntf.is_read = True
+            return ntf_json
+
+        chat_ntf_count = Message.query.filter(Message.recipient_id == current_user.id,
+                                              Message.is_read == False).count()
+
+        if page:
+            pagination = Notification.query.filter(Notification.user_id == current_user.id).order_by(
+                Notification.id.desc()).paginate(page, 20, False)
+            ntfs = pagination.items
+            response.update(pagination=render_template('pagination.html',
+                                                       page=page,
+                                                       pagination=pagination,
+                                                       getFunc='getNotifications'))
+        else:
+            ntfs = Notification.query.filter(Notification.user_id == current_user.id).order_by(
+                Notification.id.desc()).limit(5)
+
+        base_ntf = [ntf_handle(x) for x in ntfs]
+        db.session.commit()
+
+        response.update(base_ntf=base_ntf, chat_ntf_count=chat_ntf_count, see_more=url_for('notifications'))
+        return response
 
     @staticmethod
     def count() -> int:
         message_notifications = Message.query.filter(Message.recipient_id == current_user.id,
                                                      Message.is_read == False)
-        return message_notifications.count() + len(current_user.notifications)
+        base_ntf = Notification.query.filter(Notification.user_id == current_user.id, Notification.is_read == False)
+        return message_notifications.count() + base_ntf.count()

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask_security import RoleMixin, UserMixin, current_user
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db, login_manager
 
@@ -88,6 +89,16 @@ class Notification(db.Model, UserMixin):
 
     def __repr__(self):
         return f"id: {self.id} title: {self.title}"
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'date': self.date.strftime("%m/%d/%Y") + ' ' + self.date.strftime("%H:%M") + ' UTC',
+            'title': self.title,
+            'content': self.content,
+            'is_read': self.is_read
+        }
 
 
 class Chat(db.Model, UserMixin):

@@ -2,8 +2,9 @@ const chat_window = document.getElementById('chat-window');
 const chat_list_items = document.getElementById('chat-list-items');
 const chat_log = document.getElementById('chat-log');
 
-if (act === 'new') {
+if (urlParams.get('act') === 'new') {
     document.body.classList.add('act-new-chat')
+    document.getElementById(`search-users-for-new-chat`).addEventListener("keyup", searchUsers);
 }
 
 refresh_chat(urlParams.get("user_id"), true)
@@ -58,9 +59,14 @@ chat_window.addEventListener("click", function (event) {
             const user_id = target.getAttribute("user_id");
 
             if (chat_data.r_id) {
-                document.querySelector(`[user_id="${chat_data.r_id}"]`).classList.remove('current')
+                document.querySelectorAll(`[user_id="${chat_data.r_id}"]`).forEach(function (target) {
+                    target.classList.remove('current')
+                })
             }
-            target.classList.add('current')
+
+            document.querySelectorAll(`[user_id='${user_id}']`).forEach(function (target) {
+                target.classList.add('current')
+            })
 
             urlParams.set('user_id', user_id)
             history.pushState({}, null, `?${urlParams.toString()}`);
@@ -70,7 +76,7 @@ chat_window.addEventListener("click", function (event) {
                 document.getElementById(`search-users-for-new-chat`).removeEventListener("keyup", searchUsers);
             }
             chat_log.removeEventListener('scroll', onScrollgetMessages)
-            let has_ntf = target.getAttribute('has_ntf')? true : false
+            let has_ntf = target.getAttribute('has_ntf') ? true : false
             refresh_chat(user_id, has_ntf, has_ntf)
 
             break
@@ -81,17 +87,6 @@ chat_window.addEventListener("click", function (event) {
 
             socket.emit('send_message', {recipient: parseInt(chat_data.r_id), content: content});
             document.getElementById('input_message').value = '';
-
-            break
-
-        case "page":
-
-            const value = document.getElementById(`search-users-for-new-chat`).value;
-
-            const getSearchUser = Get('users.search', `username=${value}&p=${target.getAttribute('page')}`, document.getElementById(`search-user-result`))
-            getSearchUser.onload = function () {
-                document.getElementById(`search-user-result`).innerHTML = JSON.parse(getSearchUser.response)['users.search']
-            };
 
             break
 
@@ -117,12 +112,17 @@ function searchUsers(event = KeyboardEvent) {
     if (event.keyCode === 13) {
         const value = document.getElementById(`search-users-for-new-chat`).value;
         if (value) {
-            const getSearchUser = Get('users.search', `username=${value}&p=1`, document.getElementById(`search-user-result`))
-            getSearchUser.onload = function () {
-                document.getElementById(`search-user-result`).innerHTML = JSON.parse(getSearchUser.response)['users.search']
-            };
+            getUsers(1)
         }
     }
+}
+
+function getUsers(page = 1) {
+    const value = document.getElementById(`search-users-for-new-chat`).value;
+    const getSearchUser = Get('users.search', `username=${value}&p=${page}`, document.getElementById(`search-user-result`))
+    getSearchUser.onload = function () {
+        document.getElementById(`search-user-result`).innerHTML = JSON.parse(getSearchUser.response)['users.search']
+    };
 }
 
 function searchMessage(event = KeyboardEvent) {
@@ -196,13 +196,6 @@ function dateH(datestr) {
     p.innerText = datestr;
     h.appendChild(p)
     return h
-}
-
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i
-    }
-    return i;
 }
 
 function createMessage(message) {

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Уведомления</h2>
+    <div class="content-block" id="ntf-list" style="min-height: 50vh"></div>
+    <script type="text/javascript">
+        getNotifications(1, document.getElementById('ntf-list'))
+    </script>
+{% endblock content %}

@@ -1,0 +1,15 @@
+<div class="pagination">
+    <div class="prev-page">
+        {% if pagination.has_prev %}
+            <div class="button" id="page" onclick="{{ getFunc }}({{ pagination.prev_num }})">&lt;&lt;</div>
+        {% endif %}
+    </div>
+    <div class="page-num">
+        {{ page }}
+    </div>
+    <div class="next-page">
+        {% if pagination.has_next %}
+            <div class="button" id="page" onclick="{{ getFunc }}({{ pagination.next_num }})">&gt;&gt;</div>
+        {% endif %}
+    </div>
+</div>

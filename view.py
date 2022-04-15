@@ -74,3 +74,7 @@ def logout():
 @app.route('/profile/<int:user_id>')
 def profile(user_id: int):
     return render_template('profile.html', user=User.query.get_or_404(user_id))
+
+@app.route('/notifications')
+def notifications():
+    return render_template('notifications.html')

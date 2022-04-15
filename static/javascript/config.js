@@ -8,10 +8,9 @@ loading.classList.add('loading')
 
 let url_for_icons
 let urlParams = new URLSearchParams(window.location.search);
-let act = urlParams.get('act')
 
 let notifications = {
-    has_new: false,
+    has_new: true,
 }
 
 /**

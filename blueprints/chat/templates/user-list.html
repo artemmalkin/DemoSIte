@@ -1,20 +1,6 @@
-{% if users.items %}
-    <div class="pagination">
-        <div class="prev-page">
-            {% if users.has_prev %}
-                <div class="button" id="page" page="{{ users.prev_num }}">&lt;&lt;</div>
-            {% endif %}
-        </div>
-        <div class="page-num">
-            {{ page }}
-        </div>
-        <div class="next-page">
-            {% if users.has_next %}
-                 <div class="button" id="page" page="{{ users.next_num }}">&gt;&gt;</div>
-            {% endif %}
-        </div>
-    </div>
-    {% for user in users.items %}
+{% if pagination and pagination.items %}
+    {% include 'pagination.html' %}
+    {% for user in pagination.items %}
         <div class="user-item" id="user-item" user_id="{{ user.id }}">
         <a href="{{ url_for('profile', user_id=user.id) }}">{{ user.login }}</a>
         </div>

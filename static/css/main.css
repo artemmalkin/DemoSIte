@@ -90,6 +90,9 @@ body {
     width: 100%;
 }
 
+.secondary {
+    opacity: .7;
+}
 .ntf-title {
     font-size: 1.1em;
     color: rgba(105, 161, 29, 0.78);
@@ -106,7 +109,7 @@ body {
 /* pagination */
 
 .pagination {
-    position: absolute;
+    position: relative;
     top: 0;
     width: 100%;
 }

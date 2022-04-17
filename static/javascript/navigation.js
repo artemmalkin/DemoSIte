@@ -63,9 +63,9 @@ function updateNotifications() {
         const response = JSON.parse(getNtfsCount.response)
         const count = response['notifications.count']
         if (count === 0) {
-            document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification.svg`)
+            document.getElementById('notification-icon').setAttribute('src', '/static/icons/notification.svg')
         } else {
-            document.getElementById('notification-icon').setAttribute('src', `${url_for_icons}/notification-active.svg`)
+            document.getElementById('notification-icon').setAttribute('src', '/static/icons/notification-active.svg')
             notifications.has_new = true
         }
         if (count <= 99) {

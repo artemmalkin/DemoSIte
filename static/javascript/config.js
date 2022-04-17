@@ -6,7 +6,6 @@ loading.src = '../static/loading.gif'
 loading.width = 50
 loading.classList.add('loading')
 
-let url_for_icons
 let urlParams = new URLSearchParams(window.location.search);
 
 let notifications = {

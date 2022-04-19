@@ -1,3 +1,4 @@
+
 const menu_auth = document.getElementById('menu-auth');
 
 updateNotifications()

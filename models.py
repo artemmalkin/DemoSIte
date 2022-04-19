@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from flask_security import RoleMixin, UserMixin, current_user
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db, login_manager
 

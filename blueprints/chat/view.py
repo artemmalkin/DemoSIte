@@ -32,6 +32,7 @@ def on_leave(data):
 def handle_message(data):
     prt = ChatParticipation.query.filter(ChatParticipation.recipient_id == data['recipient'],
                                          ChatParticipation.sender_id == current_user.id).one_or_none()
+    # check message for correct data, add to db and emit it
     if len(re.sub("^\s+|\n|\r|\s+$", '', data['content'])) != 0 and prt is not None:
         message = add_message(chat_id=prt.chat_id, recipient_id=data['recipient'],
                               content=data['content'])

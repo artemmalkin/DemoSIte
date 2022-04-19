@@ -35,6 +35,7 @@ def add_message(chat_id: int, recipient_id: int, content: str) -> dict:
 
 
 def set_chat_read(chat_id: int) -> None:
+    # Marks a chat as read
     Message.query.filter(Message.chat_id == chat_id, Message.sender_id != current_user.id).update(
         {Message.is_read: True})
     db.session.commit()
